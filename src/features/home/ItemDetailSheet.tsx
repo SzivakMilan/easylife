@@ -1,5 +1,6 @@
 import { useRef, useState } from 'react'
 import { BottomSheet } from '../../components/ui/BottomSheet'
+import { AttachmentViewer } from '../../components/ui/AttachmentViewer'
 import { AvatarStack } from '../../components/ui/Avatar'
 import { formatHUF } from '../../lib/currency'
 import { formatFullDate, parseDate, formatTime } from '../../lib/dateUtils'
@@ -44,6 +45,7 @@ function DetailContent({ item, onClose }: { item: AgendaItem; onClose: () => voi
   const { bills, markPaid, update: updateBill } = useBills()
   const [mode, setMode] = useState<'view' | 'edit'>('view')
   const [fileError, setFileError] = useState<string | null>(null)
+  const [viewerUrl, setViewerUrl] = useState<string | null>(null)
 
   if (item.type === 'deadline') {
     const deadline = deadlines.find((d) => d.id === item.id)
@@ -174,12 +176,14 @@ function DetailContent({ item, onClose }: { item: AgendaItem; onClose: () => voi
     .filter((b) => b.issuer === bill.issuer && b.id !== bill.id)
     .sort((a, b) => b.dueDate.localeCompare(a.dueDate))
 
+  const isPdf = (bill.filePath ?? '').toLowerCase().endsWith('.pdf')
+
   async function handleOpenFile() {
     if (!bill!.filePath) return
     setFileError(null)
     try {
       const url = await getBillFileSignedUrl(bill!.filePath)
-      window.open(url, '_blank', 'noopener,noreferrer')
+      setViewerUrl(url)
     } catch (err) {
       setFileError(err instanceof Error ? err.message : 'Nem sikerült megnyitni a mellékletet')
     }
@@ -231,6 +235,7 @@ function DetailContent({ item, onClose }: { item: AgendaItem; onClose: () => voi
           </div>
         </div>
       )}
+      <AttachmentViewer url={viewerUrl} isPdf={isPdf} onClose={() => setViewerUrl(null)} />
     </div>
   )
 }
