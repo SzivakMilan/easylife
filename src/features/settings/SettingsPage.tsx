@@ -6,8 +6,12 @@ import { detectPlatform, isStandalone } from '../../lib/platform'
 import { getExistingSubscription, isPushSupported, subscribeToPush, unsubscribeFromPush } from '../../lib/api/push'
 import { supabase } from '../../lib/supabaseClient'
 import { InstallGuideSheet } from './InstallGuideSheet'
+import { ProfileSheet } from './ProfileSheet'
+import { HouseholdSheet } from './HouseholdSheet'
+import { AboutSheet } from './AboutSheet'
 
-const ROWS = ['Profil', 'Háztartás', 'Névjegy']
+type SettingsRow = 'Profil' | 'Háztartás' | 'Névjegy'
+const ROWS: SettingsRow[] = ['Profil', 'Háztartás', 'Névjegy']
 
 export function SettingsPage() {
   const { passkeySupported, registerPasskey } = useAuth()
@@ -22,6 +26,7 @@ export function SettingsPage() {
     })
   }, [passkeySupported])
   const [installGuideOpen, setInstallGuideOpen] = useState(false)
+  const [openRow, setOpenRow] = useState<SettingsRow | null>(null)
   const [installed] = useState(() => isStandalone())
   const [platform] = useState(() => detectPlatform())
 
@@ -137,14 +142,21 @@ export function SettingsPage() {
 
       <Card className="overflow-hidden">
         {ROWS.map((row) => (
-          <div key={row} className="flex items-center justify-between border-t border-white/8 px-4 py-3.5 first:border-t-0">
+          <button
+            key={row}
+            onClick={() => setOpenRow(row)}
+            className="flex w-full items-center justify-between border-t border-white/8 px-4 py-3.5 text-left first:border-t-0 active:bg-white/5"
+          >
             <span className="text-[16px] font-medium text-white">{row}</span>
             <span className="text-white/30">›</span>
-          </div>
+          </button>
         ))}
       </Card>
 
       <InstallGuideSheet open={installGuideOpen} onClose={() => setInstallGuideOpen(false)} />
+      <ProfileSheet open={openRow === 'Profil'} onClose={() => setOpenRow(null)} />
+      <HouseholdSheet open={openRow === 'Háztartás'} onClose={() => setOpenRow(null)} />
+      <AboutSheet open={openRow === 'Névjegy'} onClose={() => setOpenRow(null)} />
     </div>
   )
 }

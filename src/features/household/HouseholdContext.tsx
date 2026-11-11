@@ -14,6 +14,8 @@ interface HouseholdContextValue {
   joinHousehold: (code: string, displayName: string, avatarColor: string) => Promise<{ error: string | null }>
   createInvite: (kind: 'member' | 'household_link') => Promise<{ invite: Invite | null; error: string | null }>
   redeemHouseholdLink: (code: string) => Promise<{ error: string | null }>
+  updateHouseholdName: (name: string) => Promise<{ error: string | null }>
+  updateMyMember: (displayName: string, avatarColor: string) => Promise<{ error: string | null }>
 }
 
 const HouseholdContext = createContext<HouseholdContextValue | null>(null)
@@ -133,6 +135,25 @@ export function HouseholdProvider({ children }: { children: ReactNode }) {
     return { error: null }
   }
 
+  async function updateHouseholdName(name: string) {
+    if (!household) return { error: 'Nincs háztartás' }
+    const { error } = await supabase.from('households').update({ name }).eq('id', household.id)
+    if (error) return { error: error.message }
+    await refresh()
+    return { error: null }
+  }
+
+  async function updateMyMember(displayName: string, avatarColor: string) {
+    if (!myMember) return { error: 'Nincs tagság' }
+    const { error } = await supabase
+      .from('household_members')
+      .update({ display_name: displayName, avatar_color: avatarColor })
+      .eq('id', myMember.id)
+    if (error) return { error: error.message }
+    await refresh()
+    return { error: null }
+  }
+
   return (
     <HouseholdContext.Provider
       value={{
@@ -146,6 +167,8 @@ export function HouseholdProvider({ children }: { children: ReactNode }) {
         joinHousehold,
         createInvite,
         redeemHouseholdLink,
+        updateHouseholdName,
+        updateMyMember,
       }}
     >
       {children}
