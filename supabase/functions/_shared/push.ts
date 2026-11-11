@@ -21,10 +21,21 @@ export async function sendPushToMembers(
   const ids = [...new Set(memberIds)]
   if (ids.length === 0) return
 
+  // Egy user több háztartásnak is tagja lehet (külön household_members sorral),
+  // de a push-feliratkozása csak az egyik tagságához van kötve. Ezért a tagokból
+  // userre, majd a user ÖSSZES tagságára bővítünk, hogy minden háztartásból
+  // megkapja az értesítést.
+  const { data: memberRows } = await supabase.from('household_members').select('user_id').in('id', ids)
+  const userIds = [...new Set((memberRows ?? []).map((m: { user_id: string }) => m.user_id))]
+  const { data: allMemberships } = userIds.length
+    ? await supabase.from('household_members').select('id').in('user_id', userIds)
+    : { data: [] }
+  const allIds = [...new Set([...ids, ...(allMemberships ?? []).map((m: { id: string }) => m.id)])]
+
   const { data: subscriptions } = await supabase
     .from('push_subscriptions')
     .select('endpoint, p256dh, auth')
-    .in('member_id', ids)
+    .in('member_id', allIds)
 
   const json = JSON.stringify({ title: payload.title, body: payload.body, url: payload.url ?? '/' })
 

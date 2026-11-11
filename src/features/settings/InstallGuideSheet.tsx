@@ -32,7 +32,7 @@ export function InstallGuideSheet({ open, onClose }: InstallGuideSheetProps) {
             key={t.key}
             onClick={() => setPlatform(t.key)}
             className={`flex-1 rounded-pill py-2 text-[13px] font-semibold transition-colors ${
-              platform === t.key ? 'bg-white text-black' : 'text-white/60'
+              platform === t.key ? 'bg-[var(--accent)] text-black' : 'text-white/60'
             }`}
           >
             {t.label}

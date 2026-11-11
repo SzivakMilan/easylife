@@ -12,6 +12,10 @@
   --section-family-accent: #fb7185;
   --section-settings-accent: #9ca3af;
 
+  /* Az aktuális szekció akcentszíne (a SectionBackground állítja át oldalváltáskor).
+     Elsődleges gombok és kiválasztott buborékok háttere - fehér gomb helyett. */
+  --accent: var(--section-home-accent);
+
   --radius-card: 22px;
   --radius-pill: 999px;
 
@@ -56,6 +60,10 @@ body {
   min-height: 100dvh;
 }
 
+/* FONTOS: @layer base-ben kell lennie. Réteg nélküli (unlayered) CSS minden
+   Tailwind utility-nél erősebb, így a lenti `color: inherit` felülírta a gombok
+   text-black/text-* osztályait -> fehér háttéren fehér, olvashatatlan szöveg. */
+@layer base {
 button {
   font-family: inherit;
   color: inherit;
@@ -72,6 +80,7 @@ button {
      enélkül a fenti appearance-reset önmagában nem elég ahhoz, hogy a
      ténylegesen beállított szövegszín (pl. text-black) látszódjon. */
   -webkit-text-fill-color: currentColor;
+}
 }
 
 @media (prefers-reduced-motion: reduce) {

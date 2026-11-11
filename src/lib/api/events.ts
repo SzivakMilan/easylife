@@ -105,3 +105,9 @@ export async function updateEvent(id: string, input: EventInput): Promise<void> 
     if (insErr) throw insErr
   }
 }
+
+export async function deleteEvent(id: string): Promise<void> {
+  // A résztvevők/nézők (event_participants, event_viewers) ON DELETE CASCADE-del törlődnek
+  const { error } = await supabase.from('events').delete().eq('id', id)
+  if (error) throw error
+}

@@ -18,3 +18,11 @@ export interface Invite {
   code: string
   expiresAt: string | null
 }
+
+export interface MyHousehold {
+  id: string
+  name: string
+  memberId: string
+  role: 'owner' | 'member'
+  isActive: boolean
+}

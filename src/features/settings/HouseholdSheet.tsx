@@ -44,7 +44,7 @@ export function HouseholdSheet({ open, onClose }: HouseholdSheetProps) {
         <button
           type="submit"
           disabled={busy}
-          className="mt-1 rounded-pill bg-white px-4 py-3 text-[15px] font-semibold text-black disabled:opacity-50"
+          className="mt-1 rounded-pill bg-[var(--accent)] px-4 py-3 text-[15px] font-semibold text-black disabled:opacity-50"
         >
           {busy ? 'Mentés...' : 'Mentés'}
         </button>

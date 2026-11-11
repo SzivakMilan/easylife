@@ -2,6 +2,7 @@ import { useRef, useState } from 'react'
 import { format } from 'date-fns'
 import { z } from 'zod'
 import { BottomSheet } from '../../components/ui/BottomSheet'
+import { ConfirmDeleteButton } from '../../components/ui/ConfirmDeleteButton'
 import { formatHUF } from '../../lib/currency'
 import { formatFullDate, parseDate } from '../../lib/dateUtils'
 import { SectionIcon } from '../../components/ui/icons'
@@ -94,15 +95,17 @@ export function GoalDetailSheet({ goal, onClose }: GoalDetailSheetProps) {
               setMode('view')
             }}
           />
-          <button
-            onClick={async () => {
-              await deleteGoal(live.id)
-              handleClose()
-            }}
-            className="mt-2 w-full text-center text-[14px] font-medium text-red-400"
-          >
-            Cél törlése
-          </button>
+          <div className="mt-4">
+            <ConfirmDeleteButton
+              label="Cél törlése"
+              question={`Biztosan törlöd a(z) „${live.name}” célt?`}
+              warning="A célhoz tartozó összes befizetés is törlődik."
+              onConfirm={async () => {
+                await deleteGoal(live.id)
+                handleClose()
+              }}
+            />
+          </div>
         </div>
       )}
 
@@ -133,7 +136,7 @@ export function GoalDetailSheet({ goal, onClose }: GoalDetailSheetProps) {
           <button
             type="submit"
             disabled={busy}
-            className="mt-1 rounded-pill bg-white px-4 py-3 text-[15px] font-semibold text-black disabled:opacity-50"
+            className="mt-1 rounded-pill bg-[var(--accent)] px-4 py-3 text-[15px] font-semibold text-black disabled:opacity-50"
           >
             {busy ? 'Mentés...' : 'Hozzáadás'}
           </button>
@@ -201,9 +204,11 @@ export function GoalDetailSheet({ goal, onClose }: GoalDetailSheetProps) {
                     <span className="flex shrink-0 items-center gap-3">
                       <span className="text-emerald-400">+{formatHUF(c.amount)}</span>
                       <button
-                        onClick={() => deleteContribution(c.id)}
+                        onClick={() => {
+                          if (window.confirm('Biztosan törlöd ezt a befizetést?')) deleteContribution(c.id)
+                        }}
                         aria-label="Törlés"
-                        className="text-white/30 active:text-red-400"
+                        className="-mr-2 flex h-9 w-9 items-center justify-center rounded-full text-[16px] text-white/60 active:bg-red-500/20 active:text-red-400"
                       >
                         ✕
                       </button>
