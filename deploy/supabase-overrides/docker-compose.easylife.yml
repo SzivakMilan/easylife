@@ -1,0 +1,19 @@
+# Projekt-specifikus kiegészítés a hivatalos self-hosted Supabase stackhez.
+#
+# A hivatalos docker-compose.yml-t NEM módosítjuk, hanem ezt a fájlt rétegezzük
+# rá a run.sh override mechanizmusával. Az "easylife" stack mappájában (ahova a
+# setup.sh a hivatalos docker/ tartalmát letöltötte):
+#
+#   cp <ez a fájl> docker-compose.easylife.yml
+#   sh run.sh config add easylife
+#   sh run.sh recreate functions
+#
+# Ez csak a VAPID push-kulcsokat adja hozzá a functions konténerhez - minden
+# mást (SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY stb.) a hivatalos
+# docker-compose.yml már beállít a send-reminders Edge Function számára.
+services:
+  functions:
+    environment:
+      VAPID_PUBLIC_KEY: ${VAPID_PUBLIC_KEY}
+      VAPID_PRIVATE_KEY: ${VAPID_PRIVATE_KEY}
+      VAPID_SUBJECT: ${VAPID_SUBJECT}
