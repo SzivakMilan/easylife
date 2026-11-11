@@ -1,6 +1,7 @@
 // Ütemezve (cron) fut: megnézi, mely határidők/időpontok/számlák esedékessége közeleg,
 // és push értesítést küld az érintett háztartás tagjainak + a megosztott extra nézőknek.
-// Minden tételről csak egyszer küld emlékeztetőt (notified_at mező).
+// Egy tételhez TÖBB emlékeztető-időpont is tartozhat (reminder_offsets) - mindegyikhez
+// külön-külön, csak egyszer küld push-t (notified_offsets tárolja, melyikhez ment már).
 
 import { createClient } from 'npm:@supabase/supabase-js@2'
 import webpush from 'npm:web-push@3.6.7'
@@ -69,8 +70,16 @@ async function sendForItem(item: NotifyItem) {
       }
     }),
   )
+}
 
-  await supabase.from(item.table).update({ notified_at: new Date().toISOString() }).eq('id', item.id)
+/** Az adott offsetet elküldöttként jelöli, és frissíti a "legutóbb értesítve" időbélyeget. */
+async function markOffsetNotified(table: TableName, id: string, notifiedOffsets: number[], offset: number) {
+  const next = [...new Set([...notifiedOffsets, offset])]
+  await supabase
+    .from(table)
+    .update({ notified_offsets: next, notified_at: new Date().toISOString() })
+    .eq('id', id)
+  return next
 }
 
 Deno.serve(async () => {
@@ -79,69 +88,78 @@ Deno.serve(async () => {
 
   const { data: deadlines } = await supabase
     .from('deadlines')
-    .select('id, household_id, title, due_date, due_time, reminder_offset_minutes')
+    .select('id, household_id, title, due_date, due_time, reminder_offsets, notified_offsets')
     .eq('done', false)
-    .is('notified_at', null)
 
   for (const d of deadlines ?? []) {
-    if (d.reminder_offset_minutes == null) continue
+    let notified = d.notified_offsets ?? []
     const effectiveAt = new Date(`${d.due_date}T${normalizeTime(d.due_time, '09:00')}:00`)
-    if (shouldNotify(effectiveAt, d.reminder_offset_minutes, now)) {
-      await sendForItem({
-        table: 'deadlines',
-        id: d.id,
-        householdId: d.household_id,
-        title: 'Határidő közeleg',
-        body: d.title,
-        viewerTable: 'deadline_viewers',
-        viewerColumn: 'deadline_id',
-      })
-      sent.push(`deadline:${d.id}`)
+    for (const offset of d.reminder_offsets ?? []) {
+      if (notified.includes(offset)) continue
+      if (shouldNotify(effectiveAt, offset, now)) {
+        await sendForItem({
+          table: 'deadlines',
+          id: d.id,
+          householdId: d.household_id,
+          title: 'Határidő közeleg',
+          body: d.title,
+          viewerTable: 'deadline_viewers',
+          viewerColumn: 'deadline_id',
+        })
+        notified = await markOffsetNotified('deadlines', d.id, notified, offset)
+        sent.push(`deadline:${d.id}:${offset}`)
+      }
     }
   }
 
   const { data: events } = await supabase
     .from('events')
-    .select('id, household_id, title, start_at, reminder_offset_minutes')
-    .is('notified_at', null)
+    .select('id, household_id, title, start_at, reminder_offsets, notified_offsets')
 
   for (const e of events ?? []) {
-    if (e.reminder_offset_minutes == null) continue
+    let notified = e.notified_offsets ?? []
     const effectiveAt = new Date(e.start_at)
-    if (shouldNotify(effectiveAt, e.reminder_offset_minutes, now)) {
-      await sendForItem({
-        table: 'events',
-        id: e.id,
-        householdId: e.household_id,
-        title: 'Közelgő időpont',
-        body: e.title,
-        viewerTable: 'event_viewers',
-        viewerColumn: 'event_id',
-      })
-      sent.push(`event:${e.id}`)
+    for (const offset of e.reminder_offsets ?? []) {
+      if (notified.includes(offset)) continue
+      if (shouldNotify(effectiveAt, offset, now)) {
+        await sendForItem({
+          table: 'events',
+          id: e.id,
+          householdId: e.household_id,
+          title: 'Közelgő időpont',
+          body: e.title,
+          viewerTable: 'event_viewers',
+          viewerColumn: 'event_id',
+        })
+        notified = await markOffsetNotified('events', e.id, notified, offset)
+        sent.push(`event:${e.id}:${offset}`)
+      }
     }
   }
 
   const { data: bills } = await supabase
     .from('bills')
-    .select('id, household_id, issuer, amount, due_date, reminder_offset_minutes')
+    .select('id, household_id, issuer, amount, due_date, reminder_offsets, notified_offsets')
     .eq('status', 'pending')
-    .is('notified_at', null)
 
   for (const b of bills ?? []) {
-    if (b.reminder_offset_minutes == null) continue
+    let notified = b.notified_offsets ?? []
     const effectiveAt = new Date(`${b.due_date}T09:00:00`)
-    if (shouldNotify(effectiveAt, b.reminder_offset_minutes, now)) {
-      await sendForItem({
-        table: 'bills',
-        id: b.id,
-        householdId: b.household_id,
-        title: 'Esedékes számla',
-        body: `${b.issuer} - ${b.amount} Ft`,
-        viewerTable: 'bill_viewers',
-        viewerColumn: 'bill_id',
-      })
-      sent.push(`bill:${b.id}`)
+    for (const offset of b.reminder_offsets ?? []) {
+      if (notified.includes(offset)) continue
+      if (shouldNotify(effectiveAt, offset, now)) {
+        await sendForItem({
+          table: 'bills',
+          id: b.id,
+          householdId: b.household_id,
+          title: 'Esedékes számla',
+          body: `${b.issuer} - ${b.amount} Ft`,
+          viewerTable: 'bill_viewers',
+          viewerColumn: 'bill_id',
+        })
+        notified = await markOffsetNotified('bills', b.id, notified, offset)
+        sent.push(`bill:${b.id}:${offset}`)
+      }
     }
   }
 

@@ -8,7 +8,7 @@ interface EventRow {
   end_at: string | null
   location: string | null
   note: string | null
-  reminder_offset_minutes: number | null
+  reminder_offsets: number[]
   event_participants: { member_id: string }[] | null
 }
 
@@ -20,7 +20,7 @@ function mapRow(row: EventRow): EventItem {
     endAt: row.end_at ?? undefined,
     location: row.location ?? undefined,
     note: row.note ?? undefined,
-    reminderOffsetMinutes: row.reminder_offset_minutes ?? undefined,
+    reminderOffsets: row.reminder_offsets ?? [],
     participantIds: (row.event_participants ?? []).map((p) => p.member_id),
   }
 }
@@ -28,7 +28,7 @@ function mapRow(row: EventRow): EventItem {
 export async function fetchEvents(): Promise<EventItem[]> {
   const { data, error } = await supabase
     .from('events')
-    .select('id, title, start_at, end_at, location, note, reminder_offset_minutes, event_participants(member_id)')
+    .select('id, title, start_at, end_at, location, note, reminder_offsets, event_participants(member_id)')
     .order('start_at', { ascending: true })
   if (error) throw error
   return (data ?? []).map((row) => mapRow(row as unknown as EventRow))
@@ -40,7 +40,7 @@ export interface EventInput {
   endAt?: string
   location?: string
   note?: string
-  reminderOffsetMinutes?: number
+  reminderOffsets: number[]
   participantIds: string[]
   viewerIds?: string[]
 }
@@ -55,7 +55,7 @@ export async function createEvent(householdId: string, userId: string, input: Ev
       end_at: input.endAt ?? null,
       location: input.location ?? null,
       note: input.note ?? null,
-      reminder_offset_minutes: input.reminderOffsetMinutes ?? null,
+      reminder_offsets: input.reminderOffsets,
       created_by: userId,
     })
     .select('id')
@@ -90,7 +90,8 @@ export async function updateEvent(id: string, input: EventInput): Promise<void> 
       end_at: input.endAt ?? null,
       location: input.location ?? null,
       note: input.note ?? null,
-      reminder_offset_minutes: input.reminderOffsetMinutes ?? null,
+      reminder_offsets: input.reminderOffsets,
+      notified_offsets: [],
     })
     .eq('id', id)
   if (error) throw error

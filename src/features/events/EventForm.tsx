@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { z } from 'zod'
 import { format } from 'date-fns'
 import { useHousehold } from '../household/HouseholdContext'
-import { REMINDER_OPTIONS } from '../../lib/reminderOptions'
+import { ReminderPicker } from '../../components/ui/ReminderPicker'
 import type { EventInput } from '../../lib/api/events'
 import type { EventItem } from '../../types'
 
@@ -29,7 +29,7 @@ export function EventForm({ initial, onSubmit, onCancel, submitLabel }: EventFor
   const [endTime, setEndTime] = useState(() => (initial?.endAt ? format(new Date(initial.endAt), 'HH:mm') : ''))
   const [location, setLocation] = useState(initial?.location ?? '')
   const [note, setNote] = useState(initial?.note ?? '')
-  const [reminder, setReminder] = useState(initial?.reminderOffsetMinutes?.toString() ?? '')
+  const [reminders, setReminders] = useState<number[]>(initial?.reminderOffsets ?? [])
   const [participantIds, setParticipantIds] = useState<string[]>(initial?.participantIds ?? [])
   const [viewerIds, setViewerIds] = useState<string[]>([])
   const [error, setError] = useState<string | null>(null)
@@ -57,7 +57,7 @@ export function EventForm({ initial, onSubmit, onCancel, submitLabel }: EventFor
         endAt: endTime ? new Date(`${result.data.date}T${endTime}:00`).toISOString() : undefined,
         location: location.trim() || undefined,
         note: note.trim() || undefined,
-        reminderOffsetMinutes: reminder ? Number(reminder) : undefined,
+        reminderOffsets: reminders,
         participantIds,
         viewerIds,
       })
@@ -109,20 +109,7 @@ export function EventForm({ initial, onSubmit, onCancel, submitLabel }: EventFor
         rows={2}
         className="rounded-2xl border border-white/15 bg-white/5 px-4 py-3 text-[15px] text-white placeholder:text-white/35 focus:outline-none"
       />
-      <div>
-        <p className="mb-1.5 text-[13px] font-medium text-white/50">Emlékeztess</p>
-        <select
-          value={reminder}
-          onChange={(e) => setReminder(e.target.value)}
-          className="w-full rounded-2xl border border-white/15 bg-white/5 px-3 py-3 text-[14px] text-white focus:outline-none [color-scheme:dark]"
-        >
-          {REMINDER_OPTIONS.map((o) => (
-            <option key={o.value} value={o.value}>
-              {o.label}
-            </option>
-          ))}
-        </select>
-      </div>
+      <ReminderPicker value={reminders} onChange={setReminders} />
 
       <div>
         <p className="mb-1.5 text-[13px] font-medium text-white/50">Résztvevők</p>

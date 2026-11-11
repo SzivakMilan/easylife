@@ -50,14 +50,14 @@ isOneToOne: false
                   ]
                 },"bills": {
                   Row: {
-                    "amount": number,"category_id": string | null,"created_at": string,"created_by": string,"due_date": string,"file_path": string | null,"household_id": string,"id": string,"issuer": string,"notified_at": string | null,"paid_at": string | null,"recurrence": string,"reminder_offset_minutes": number | null,"status": string
+                    "amount": number,"category_id": string | null,"created_at": string,"created_by": string,"due_date": string,"file_path": string | null,"household_id": string,"id": string,"issuer": string,"notified_at": string | null,"notified_offsets": (number)[],"paid_at": string | null,"recurrence": string,"reminder_offsets": (number)[],"status": string
                   }
                   ComputedFields: never
                   Insert: {
-                    "amount": number,"category_id"?: string | null,"created_at"?: string,"created_by": string,"due_date": string,"file_path"?: string | null,"household_id": string,"id"?: string,"issuer": string,"notified_at"?: string | null,"paid_at"?: string | null,"recurrence"?: string,"reminder_offset_minutes"?: number | null,"status"?: string
+                    "amount": number,"category_id"?: string | null,"created_at"?: string,"created_by": string,"due_date": string,"file_path"?: string | null,"household_id": string,"id"?: string,"issuer": string,"notified_at"?: string | null,"notified_offsets"?: (number)[],"paid_at"?: string | null,"recurrence"?: string,"reminder_offsets"?: (number)[],"status"?: string
                   }
                   Update: {
-                    "amount"?: number,"category_id"?: string | null,"created_at"?: string,"created_by"?: string,"due_date"?: string,"file_path"?: string | null,"household_id"?: string,"id"?: string,"issuer"?: string,"notified_at"?: string | null,"paid_at"?: string | null,"recurrence"?: string,"reminder_offset_minutes"?: number | null,"status"?: string
+                    "amount"?: number,"category_id"?: string | null,"created_at"?: string,"created_by"?: string,"due_date"?: string,"file_path"?: string | null,"household_id"?: string,"id"?: string,"issuer"?: string,"notified_at"?: string | null,"notified_offsets"?: (number)[],"paid_at"?: string | null,"recurrence"?: string,"reminder_offsets"?: (number)[],"status"?: string
                   }
                   Relationships: [
                     {
@@ -180,14 +180,14 @@ isOneToOne: false
                   ]
                 },"deadlines": {
                   Row: {
-                    "created_at": string,"created_by": string,"description": string | null,"done": boolean,"due_date": string,"due_time": string | null,"household_id": string,"id": string,"notified_at": string | null,"priority": string,"recurrence": string,"reminder_offset_minutes": number | null,"title": string
+                    "created_at": string,"created_by": string,"description": string | null,"done": boolean,"due_date": string,"due_time": string | null,"household_id": string,"id": string,"notified_at": string | null,"notified_offsets": (number)[],"priority": string,"recurrence": string,"reminder_offsets": (number)[],"title": string
                   }
                   ComputedFields: never
                   Insert: {
-                    "created_at"?: string,"created_by": string,"description"?: string | null,"done"?: boolean,"due_date": string,"due_time"?: string | null,"household_id": string,"id"?: string,"notified_at"?: string | null,"priority"?: string,"recurrence"?: string,"reminder_offset_minutes"?: number | null,"title": string
+                    "created_at"?: string,"created_by": string,"description"?: string | null,"done"?: boolean,"due_date": string,"due_time"?: string | null,"household_id": string,"id"?: string,"notified_at"?: string | null,"notified_offsets"?: (number)[],"priority"?: string,"recurrence"?: string,"reminder_offsets"?: (number)[],"title": string
                   }
                   Update: {
-                    "created_at"?: string,"created_by"?: string,"description"?: string | null,"done"?: boolean,"due_date"?: string,"due_time"?: string | null,"household_id"?: string,"id"?: string,"notified_at"?: string | null,"priority"?: string,"recurrence"?: string,"reminder_offset_minutes"?: number | null,"title"?: string
+                    "created_at"?: string,"created_by"?: string,"description"?: string | null,"done"?: boolean,"due_date"?: string,"due_time"?: string | null,"household_id"?: string,"id"?: string,"notified_at"?: string | null,"notified_offsets"?: (number)[],"priority"?: string,"recurrence"?: string,"reminder_offsets"?: (number)[],"title"?: string
                   }
                   Relationships: [
                     {
@@ -252,14 +252,14 @@ isOneToOne: false
                   ]
                 },"events": {
                   Row: {
-                    "created_at": string,"created_by": string,"end_at": string | null,"household_id": string,"id": string,"location": string | null,"note": string | null,"notified_at": string | null,"reminder_offset_minutes": number | null,"start_at": string,"title": string
+                    "created_at": string,"created_by": string,"end_at": string | null,"household_id": string,"id": string,"location": string | null,"note": string | null,"notified_at": string | null,"notified_offsets": (number)[],"reminder_offsets": (number)[],"start_at": string,"title": string
                   }
                   ComputedFields: never
                   Insert: {
-                    "created_at"?: string,"created_by": string,"end_at"?: string | null,"household_id": string,"id"?: string,"location"?: string | null,"note"?: string | null,"notified_at"?: string | null,"reminder_offset_minutes"?: number | null,"start_at": string,"title": string
+                    "created_at"?: string,"created_by": string,"end_at"?: string | null,"household_id": string,"id"?: string,"location"?: string | null,"note"?: string | null,"notified_at"?: string | null,"notified_offsets"?: (number)[],"reminder_offsets"?: (number)[],"start_at": string,"title": string
                   }
                   Update: {
-                    "created_at"?: string,"created_by"?: string,"end_at"?: string | null,"household_id"?: string,"id"?: string,"location"?: string | null,"note"?: string | null,"notified_at"?: string | null,"reminder_offset_minutes"?: number | null,"start_at"?: string,"title"?: string
+                    "created_at"?: string,"created_by"?: string,"end_at"?: string | null,"household_id"?: string,"id"?: string,"location"?: string | null,"note"?: string | null,"notified_at"?: string | null,"notified_offsets"?: (number)[],"reminder_offsets"?: (number)[],"start_at"?: string,"title"?: string
                   }
                   Relationships: [
                     {

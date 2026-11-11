@@ -27,7 +27,7 @@ export interface Deadline {
   priority: Priority
   recurrence: Recurrence
   done: boolean
-  reminderOffsetMinutes?: number
+  reminderOffsets: number[]
 }
 
 export interface EventItem {
@@ -38,7 +38,7 @@ export interface EventItem {
   location?: string
   note?: string
   participantIds: string[]
-  reminderOffsetMinutes?: number
+  reminderOffsets: number[]
 }
 
 export type BillStatus = 'pending' | 'paid'
@@ -53,7 +53,7 @@ export interface Bill {
   paidAt?: string
   recurrence: Recurrence
   filePath?: string
-  reminderOffsetMinutes?: number
+  reminderOffsets: number[]
 }
 
 export interface SavingsGoal {
