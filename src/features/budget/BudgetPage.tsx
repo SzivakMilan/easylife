@@ -1,4 +1,4 @@
-import { addMonths, isSameMonth } from 'date-fns'
+import { addMonths, format, isSameMonth } from 'date-fns'
 import { useMemo, useState } from 'react'
 import { Card } from '../../components/ui/Card'
 import { Table, type TableColumn } from '../../components/ui/Table'
@@ -6,6 +6,7 @@ import { BottomSheet } from '../../components/ui/BottomSheet'
 import { SectionIcon } from '../../components/ui/icons'
 import { formatHUF } from '../../lib/currency'
 import { formatMonthYear, parseDate } from '../../lib/dateUtils'
+import { downloadCsv, toCsv } from '../../lib/csv'
 import { useBudget } from './BudgetContext'
 import { CategoryForm } from './CategoryForm'
 import { GoalForm } from './GoalForm'
@@ -47,6 +48,18 @@ export function BudgetPage() {
   const totalExpense = rows.reduce((sum, r) => sum + r.spent, 0)
   const totalIncome = itemsInMonth.filter((i) => i.type === 'income').reduce((sum, i) => sum + i.amount, 0)
   const balance = totalIncome - totalExpense
+
+  function handleExportCsv() {
+    const categoryName = (id: string) => categories.find((c) => c.id === id)?.name ?? ''
+    const csv = toCsv(
+      ['Dátum', 'Típus', 'Kategória', 'Összeg', 'Megjegyzés'],
+      items
+        .slice()
+        .sort((a, b) => a.occurredOn.localeCompare(b.occurredOn))
+        .map((i) => [i.occurredOn, i.type === 'income' ? 'Bevétel' : 'Kiadás', categoryName(i.categoryId), i.amount, i.note ?? '']),
+    )
+    downloadCsv(`koltsegvetes-${format(new Date(), 'yyyy-MM-dd')}.csv`, csv)
+  }
 
   const columns: TableColumn<CategoryRow>[] = [
     {
@@ -147,6 +160,12 @@ export function BudgetPage() {
           className="rounded-pill border border-white/15 bg-white/5 px-4 py-3 text-[15px] font-semibold text-white active:bg-white/10"
         >
           + Új kategória
+        </button>
+      )}
+
+      {items.length > 0 && (
+        <button onClick={handleExportCsv} className="text-center text-[14px] font-medium text-white/40">
+          Exportálás CSV-be
         </button>
       )}
 
