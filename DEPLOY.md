@@ -144,7 +144,13 @@ függvényeket (nincs `supabase functions deploy` Cloud-CLI self-hostnál):
 
 ```bash
 cp -r <app repo>/supabase/functions/send-reminders /opt/easylife-supabase/volumes/functions/
+cp -r <app repo>/supabase/functions/send-daily-digest /opt/easylife-supabase/volumes/functions/
+cp -r <app repo>/supabase/functions/notify-new-item /opt/easylife-supabase/volumes/functions/
+cp -r <app repo>/supabase/functions/_shared /opt/easylife-supabase/volumes/functions/
 ```
+
+(A `_shared` mappa a VAPID push-küldést tartalmazza - mindhárom fenti függvény
+importál belőle, úgyhogy együtt kell másolni velük.)
 
 ### 3.1 VAPID kulcsok (éles)
 
@@ -200,6 +206,20 @@ select cron.schedule(
   \$\$
   select net.http_post(
     url := 'http://functions:9000/send-reminders',
+    headers := jsonb_build_object(
+      'Content-Type', 'application/json',
+      'Authorization', 'Bearer <a .env-ben generált SERVICE_ROLE_KEY>'
+    )
+  );
+  \$\$
+);
+select cron.unschedule('send-daily-digest');
+select cron.schedule(
+  'send-daily-digest',
+  '0 6 * * *',
+  \$\$
+  select net.http_post(
+    url := 'http://functions:9000/send-daily-digest',
     headers := jsonb_build_object(
       'Content-Type', 'application/json',
       'Authorization', 'Bearer <a .env-ben generált SERVICE_ROLE_KEY>'
