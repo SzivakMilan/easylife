@@ -3,8 +3,8 @@ import { useRef, type ReactNode } from 'react'
 import { Routes, useLocation, useNavigate } from 'react-router-dom'
 import { adjacentSection, sectionByPath, sectionIndex } from '../../lib/sections'
 
-const SWIPE_DISTANCE = 70
-const SWIPE_VELOCITY = 500
+const SWIPE_DISTANCE = 60
+const SWIPE_VELOCITY = 420
 
 interface SwipeNavProps {
   children: ReactNode
@@ -40,7 +40,7 @@ export function SwipeNav({ children }: SwipeNavProps) {
 
   return (
     <motion.div
-      className="relative overflow-x-hidden"
+      className="relative min-h-full overflow-x-hidden"
       style={{ touchAction: 'pan-y' }}
       drag="x"
       dragDirectionLock

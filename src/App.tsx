@@ -50,10 +50,10 @@ function AppShell() {
   const { meta, colors } = useSection()
 
   return (
-    <div className="relative mx-auto min-h-dvh w-full max-w-[480px] border-x border-white/5">
+    <div className="relative mx-auto flex min-h-dvh w-full max-w-[480px] flex-col border-x border-white/5">
       <SectionBackground />
       <Header />
-      <main>
+      <main className="flex-1">
         <SwipeNav>
           <Route path="/" element={<HomePage />} />
           <Route path="/hataridok" element={<DeadlinesPage />} />
