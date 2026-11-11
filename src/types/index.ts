@@ -27,6 +27,7 @@ export interface Deadline {
   priority: Priority
   recurrence: Recurrence
   done: boolean
+  reminderOffsetMinutes?: number
 }
 
 export interface EventItem {
@@ -52,6 +53,7 @@ export interface Bill {
   paidAt?: string
   recurrence: Recurrence
   filePath?: string
+  reminderOffsetMinutes?: number
 }
 
 export interface BudgetCategory {

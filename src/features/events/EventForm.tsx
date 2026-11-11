@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { z } from 'zod'
 import { format } from 'date-fns'
 import { useHousehold } from '../household/HouseholdContext'
+import { REMINDER_OPTIONS } from '../../lib/reminderOptions'
 import type { EventInput } from '../../lib/api/events'
 import type { EventItem } from '../../types'
 
@@ -10,14 +11,6 @@ const schema = z.object({
   date: z.string().min(1, 'Add meg a dátumot'),
   startTime: z.string().min(1, 'Add meg a kezdés időpontját'),
 })
-
-const REMINDER_OPTIONS = [
-  { value: '', label: 'Nincs emlékeztető' },
-  { value: '15', label: '15 perccel előtte' },
-  { value: '30', label: '30 perccel előtte' },
-  { value: '60', label: '1 órával előtte' },
-  { value: '1440', label: '1 nappal előtte' },
-]
 
 interface EventFormProps {
   initial?: EventItem
@@ -116,17 +109,20 @@ export function EventForm({ initial, onSubmit, onCancel, submitLabel }: EventFor
         rows={2}
         className="rounded-2xl border border-white/15 bg-white/5 px-4 py-3 text-[15px] text-white placeholder:text-white/35 focus:outline-none"
       />
-      <select
-        value={reminder}
-        onChange={(e) => setReminder(e.target.value)}
-        className="rounded-2xl border border-white/15 bg-white/5 px-3 py-3 text-[14px] text-white focus:outline-none [color-scheme:dark]"
-      >
-        {REMINDER_OPTIONS.map((o) => (
-          <option key={o.value} value={o.value}>
-            {o.label}
-          </option>
-        ))}
-      </select>
+      <div>
+        <p className="mb-1.5 text-[13px] font-medium text-white/50">Emlékeztess</p>
+        <select
+          value={reminder}
+          onChange={(e) => setReminder(e.target.value)}
+          className="w-full rounded-2xl border border-white/15 bg-white/5 px-3 py-3 text-[14px] text-white focus:outline-none [color-scheme:dark]"
+        >
+          {REMINDER_OPTIONS.map((o) => (
+            <option key={o.value} value={o.value}>
+              {o.label}
+            </option>
+          ))}
+        </select>
+      </div>
 
       <div>
         <p className="mb-1.5 text-[13px] font-medium text-white/50">Résztvevők</p>

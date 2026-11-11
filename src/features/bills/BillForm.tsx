@@ -4,6 +4,7 @@ import { format } from 'date-fns'
 import { SectionIcon } from '../../components/ui/icons'
 import { useBudget } from '../budget/BudgetContext'
 import { useHousehold } from '../household/HouseholdContext'
+import { REMINDER_OPTIONS } from '../../lib/reminderOptions'
 import { uploadBillFile } from '../../lib/api/bills'
 import type { BillInput } from '../../lib/api/bills'
 import type { Bill, Recurrence } from '../../types'
@@ -37,6 +38,9 @@ export function BillForm({ initial, onSubmit, onCancel, submitLabel }: BillFormP
   const [dueDate, setDueDate] = useState(() => initial?.dueDate ?? format(new Date(), 'yyyy-MM-dd'))
   const [categoryId, setCategoryId] = useState(initial?.categoryId ?? categories[0]?.id ?? '')
   const [recurrence, setRecurrence] = useState<Recurrence>(initial?.recurrence ?? 'none')
+  const [reminder, setReminder] = useState(
+    initial ? (initial.reminderOffsetMinutes?.toString() ?? '') : '1440',
+  )
   const [file, setFile] = useState<File | null>(null)
   const [viewerIds, setViewerIds] = useState<string[]>([])
   const [error, setError] = useState<string | null>(null)
@@ -72,6 +76,7 @@ export function BillForm({ initial, onSubmit, onCancel, submitLabel }: BillFormP
         dueDate: result.data.dueDate,
         categoryId: result.data.categoryId,
         recurrence,
+        reminderOffsetMinutes: reminder ? Number(reminder) : undefined,
         filePath,
         viewerIds,
       })
@@ -144,6 +149,21 @@ export function BillForm({ initial, onSubmit, onCancel, submitLabel }: BillFormP
           </option>
         ))}
       </select>
+
+      <div>
+        <p className="mb-1.5 text-[13px] font-medium text-white/50">Emlékeztess</p>
+        <select
+          value={reminder}
+          onChange={(e) => setReminder(e.target.value)}
+          className="w-full rounded-2xl border border-white/15 bg-white/5 px-3 py-3 text-[14px] text-white focus:outline-none [color-scheme:dark]"
+        >
+          {REMINDER_OPTIONS.map((o) => (
+            <option key={o.value} value={o.value}>
+              {o.label}
+            </option>
+          ))}
+        </select>
+      </div>
 
       <label className="flex flex-col gap-1.5">
         <span className="text-[13px] font-medium text-white/50">

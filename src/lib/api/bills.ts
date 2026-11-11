@@ -12,6 +12,7 @@ interface BillRow {
   paid_at: string | null
   recurrence: string
   file_path: string | null
+  reminder_offset_minutes: number | null
 }
 
 function mapRow(row: BillRow): Bill {
@@ -25,13 +26,14 @@ function mapRow(row: BillRow): Bill {
     paidAt: row.paid_at ?? undefined,
     recurrence: (row.recurrence as Recurrence) ?? 'none',
     filePath: row.file_path ?? undefined,
+    reminderOffsetMinutes: row.reminder_offset_minutes ?? undefined,
   }
 }
 
 export async function fetchBills(): Promise<Bill[]> {
   const { data, error } = await supabase
     .from('bills')
-    .select('id, issuer, amount, due_date, category_id, status, paid_at, recurrence, file_path')
+    .select('id, issuer, amount, due_date, category_id, status, paid_at, recurrence, file_path, reminder_offset_minutes')
     .order('due_date', { ascending: false })
   if (error) throw error
   return (data ?? []).map(mapRow)
@@ -44,6 +46,7 @@ export interface BillInput {
   categoryId: string
   recurrence: Recurrence
   filePath?: string
+  reminderOffsetMinutes?: number
   viewerIds?: string[]
 }
 
@@ -58,6 +61,7 @@ export async function createBill(householdId: string, userId: string, input: Bil
       category_id: input.categoryId,
       recurrence: input.recurrence,
       file_path: input.filePath ?? null,
+      reminder_offset_minutes: input.reminderOffsetMinutes ?? null,
       created_by: userId,
     })
     .select('id')
@@ -86,6 +90,7 @@ export async function updateBill(id: string, input: BillInput): Promise<void> {
       category_id: input.categoryId,
       recurrence: input.recurrence,
       file_path: input.filePath ?? null,
+      reminder_offset_minutes: input.reminderOffsetMinutes ?? null,
     })
     .eq('id', id)
   if (error) throw error
@@ -137,6 +142,7 @@ export async function markBillPaid(bill: Bill, householdId: string, userId: stri
       due_date: next,
       category_id: bill.categoryId,
       recurrence: bill.recurrence,
+      reminder_offset_minutes: bill.reminderOffsetMinutes ?? null,
       created_by: userId,
     })
     if (nextError) throw nextError

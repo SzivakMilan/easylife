@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { z } from 'zod'
 import { format } from 'date-fns'
 import { useHousehold } from '../household/HouseholdContext'
+import { REMINDER_OPTIONS } from '../../lib/reminderOptions'
 import type { DeadlineInput } from '../../lib/api/deadlines'
 import type { Deadline, Priority, Recurrence } from '../../types'
 
@@ -38,6 +39,9 @@ export function DeadlineForm({ initial, onSubmit, onCancel, submitLabel }: Deadl
   const [dueTime, setDueTime] = useState(initial?.dueTime ?? '')
   const [priority, setPriority] = useState<Priority>(initial?.priority ?? 'medium')
   const [recurrence, setRecurrence] = useState<Recurrence>(initial?.recurrence ?? 'none')
+  const [reminder, setReminder] = useState(
+    initial ? (initial.reminderOffsetMinutes?.toString() ?? '') : '1440',
+  )
   const [assigneeIds, setAssigneeIds] = useState<string[]>(initial?.assigneeIds ?? [])
   const [viewerIds, setViewerIds] = useState<string[]>([])
   const [error, setError] = useState<string | null>(null)
@@ -66,6 +70,7 @@ export function DeadlineForm({ initial, onSubmit, onCancel, submitLabel }: Deadl
         dueTime: dueTime || undefined,
         priority,
         recurrence,
+        reminderOffsetMinutes: reminder ? Number(reminder) : undefined,
         assigneeIds,
         viewerIds,
       })
@@ -125,6 +130,21 @@ export function DeadlineForm({ initial, onSubmit, onCancel, submitLabel }: Deadl
           {RECURRENCE_OPTIONS.map((o) => (
             <option key={o.value} value={o.value}>
               Ismétlődés: {o.label}
+            </option>
+          ))}
+        </select>
+      </div>
+
+      <div>
+        <p className="mb-1.5 text-[13px] font-medium text-white/50">Emlékeztess</p>
+        <select
+          value={reminder}
+          onChange={(e) => setReminder(e.target.value)}
+          className="w-full rounded-2xl border border-white/15 bg-white/5 px-3 py-3 text-[14px] text-white focus:outline-none [color-scheme:dark]"
+        >
+          {REMINDER_OPTIONS.map((o) => (
+            <option key={o.value} value={o.value}>
+              {o.label}
             </option>
           ))}
         </select>

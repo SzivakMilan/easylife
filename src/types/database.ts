@@ -50,14 +50,14 @@ isOneToOne: false
                   ]
                 },"bills": {
                   Row: {
-                    "amount": number,"category_id": string | null,"created_at": string,"created_by": string,"due_date": string,"file_path": string | null,"household_id": string,"id": string,"issuer": string,"notified_at": string | null,"paid_at": string | null,"recurrence": string,"status": string
+                    "amount": number,"category_id": string | null,"created_at": string,"created_by": string,"due_date": string,"file_path": string | null,"household_id": string,"id": string,"issuer": string,"notified_at": string | null,"paid_at": string | null,"recurrence": string,"reminder_offset_minutes": number | null,"status": string
                   }
                   ComputedFields: never
                   Insert: {
-                    "amount": number,"category_id"?: string | null,"created_at"?: string,"created_by": string,"due_date": string,"file_path"?: string | null,"household_id": string,"id"?: string,"issuer": string,"notified_at"?: string | null,"paid_at"?: string | null,"recurrence"?: string,"status"?: string
+                    "amount": number,"category_id"?: string | null,"created_at"?: string,"created_by": string,"due_date": string,"file_path"?: string | null,"household_id": string,"id"?: string,"issuer": string,"notified_at"?: string | null,"paid_at"?: string | null,"recurrence"?: string,"reminder_offset_minutes"?: number | null,"status"?: string
                   }
                   Update: {
-                    "amount"?: number,"category_id"?: string | null,"created_at"?: string,"created_by"?: string,"due_date"?: string,"file_path"?: string | null,"household_id"?: string,"id"?: string,"issuer"?: string,"notified_at"?: string | null,"paid_at"?: string | null,"recurrence"?: string,"status"?: string
+                    "amount"?: number,"category_id"?: string | null,"created_at"?: string,"created_by"?: string,"due_date"?: string,"file_path"?: string | null,"household_id"?: string,"id"?: string,"issuer"?: string,"notified_at"?: string | null,"paid_at"?: string | null,"recurrence"?: string,"reminder_offset_minutes"?: number | null,"status"?: string
                   }
                   Relationships: [
                     {
@@ -180,14 +180,14 @@ isOneToOne: false
                   ]
                 },"deadlines": {
                   Row: {
-                    "created_at": string,"created_by": string,"description": string | null,"done": boolean,"due_date": string,"due_time": string | null,"household_id": string,"id": string,"notified_at": string | null,"priority": string,"recurrence": string,"title": string
+                    "created_at": string,"created_by": string,"description": string | null,"done": boolean,"due_date": string,"due_time": string | null,"household_id": string,"id": string,"notified_at": string | null,"priority": string,"recurrence": string,"reminder_offset_minutes": number | null,"title": string
                   }
                   ComputedFields: never
                   Insert: {
-                    "created_at"?: string,"created_by": string,"description"?: string | null,"done"?: boolean,"due_date": string,"due_time"?: string | null,"household_id": string,"id"?: string,"notified_at"?: string | null,"priority"?: string,"recurrence"?: string,"title": string
+                    "created_at"?: string,"created_by": string,"description"?: string | null,"done"?: boolean,"due_date": string,"due_time"?: string | null,"household_id": string,"id"?: string,"notified_at"?: string | null,"priority"?: string,"recurrence"?: string,"reminder_offset_minutes"?: number | null,"title": string
                   }
                   Update: {
-                    "created_at"?: string,"created_by"?: string,"description"?: string | null,"done"?: boolean,"due_date"?: string,"due_time"?: string | null,"household_id"?: string,"id"?: string,"notified_at"?: string | null,"priority"?: string,"recurrence"?: string,"title"?: string
+                    "created_at"?: string,"created_by"?: string,"description"?: string | null,"done"?: boolean,"due_date"?: string,"due_time"?: string | null,"household_id"?: string,"id"?: string,"notified_at"?: string | null,"priority"?: string,"recurrence"?: string,"reminder_offset_minutes"?: number | null,"title"?: string
                   }
                   Relationships: [
                     {

@@ -15,8 +15,6 @@ webpush.setVapidDetails(VAPID_SUBJECT, VAPID_PUBLIC_KEY, VAPID_PRIVATE_KEY)
 
 const supabase = createClient(SUPABASE_URL, SERVICE_ROLE_KEY)
 
-const DEFAULT_OFFSET_MINUTES = 24 * 60
-
 type TableName = 'deadlines' | 'events' | 'bills'
 
 interface NotifyItem {
@@ -81,13 +79,14 @@ Deno.serve(async () => {
 
   const { data: deadlines } = await supabase
     .from('deadlines')
-    .select('id, household_id, title, due_date, due_time')
+    .select('id, household_id, title, due_date, due_time, reminder_offset_minutes')
     .eq('done', false)
     .is('notified_at', null)
 
   for (const d of deadlines ?? []) {
+    if (d.reminder_offset_minutes == null) continue
     const effectiveAt = new Date(`${d.due_date}T${normalizeTime(d.due_time, '09:00')}:00`)
-    if (shouldNotify(effectiveAt, DEFAULT_OFFSET_MINUTES, now)) {
+    if (shouldNotify(effectiveAt, d.reminder_offset_minutes, now)) {
       await sendForItem({
         table: 'deadlines',
         id: d.id,
@@ -107,8 +106,9 @@ Deno.serve(async () => {
     .is('notified_at', null)
 
   for (const e of events ?? []) {
+    if (e.reminder_offset_minutes == null) continue
     const effectiveAt = new Date(e.start_at)
-    if (shouldNotify(effectiveAt, e.reminder_offset_minutes ?? 60, now)) {
+    if (shouldNotify(effectiveAt, e.reminder_offset_minutes, now)) {
       await sendForItem({
         table: 'events',
         id: e.id,
@@ -124,13 +124,14 @@ Deno.serve(async () => {
 
   const { data: bills } = await supabase
     .from('bills')
-    .select('id, household_id, issuer, amount, due_date')
+    .select('id, household_id, issuer, amount, due_date, reminder_offset_minutes')
     .eq('status', 'pending')
     .is('notified_at', null)
 
   for (const b of bills ?? []) {
+    if (b.reminder_offset_minutes == null) continue
     const effectiveAt = new Date(`${b.due_date}T09:00:00`)
-    if (shouldNotify(effectiveAt, DEFAULT_OFFSET_MINUTES, now)) {
+    if (shouldNotify(effectiveAt, b.reminder_offset_minutes, now)) {
       await sendForItem({
         table: 'bills',
         id: b.id,

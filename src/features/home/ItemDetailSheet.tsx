@@ -98,7 +98,6 @@ function DetailContent({ item, onClose }: { item: AgendaItem; onClose: () => voi
             {deadline.done ? 'Visszaállítás' : 'Kész'}
           </ActionButton>
           <ActionButton onClick={() => setMode('edit')}>Szerkesztés</ActionButton>
-          <ActionButton onClick={onClose}>Emlékeztess</ActionButton>
         </div>
       </div>
     )
@@ -149,7 +148,6 @@ function DetailContent({ item, onClose }: { item: AgendaItem; onClose: () => voi
           <ActionButton primary onClick={() => setMode('edit')}>
             Szerkesztés
           </ActionButton>
-          <ActionButton onClick={onClose}>Emlékeztess</ActionButton>
         </div>
       </div>
     )
@@ -220,7 +218,6 @@ function DetailContent({ item, onClose }: { item: AgendaItem; onClose: () => voi
           Befizetve
         </ActionButton>
         <ActionButton onClick={() => setMode('edit')}>Szerkesztés</ActionButton>
-        <ActionButton onClick={onClose}>Emlékeztess</ActionButton>
       </div>
       {history.length > 0 && (
         <div className="rounded-card border border-white/10 bg-black/20 p-4">
