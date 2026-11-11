@@ -8,7 +8,9 @@ import { formatHUF } from '../../lib/currency'
 import { formatMonthYear, parseDate } from '../../lib/dateUtils'
 import { useBudget } from './BudgetContext'
 import { CategoryForm } from './CategoryForm'
-import type { BudgetCategory } from '../../types'
+import { GoalForm } from './GoalForm'
+import { GoalDetailSheet } from './GoalDetailSheet'
+import type { BudgetCategory, SavingsGoal } from '../../types'
 import { CategoryDetailSheet } from './CategoryDetailSheet'
 
 interface CategoryRow {
@@ -19,11 +21,13 @@ interface CategoryRow {
 }
 
 export function BudgetPage() {
-  const { categories, items, loading, createCategory } = useBudget()
+  const { categories, items, savingsGoals, savingsContributions, loading, createCategory, createGoal } = useBudget()
   const [anchorDate] = useState(() => new Date())
   const [monthOffset, setMonthOffset] = useState(0)
   const [selectedCategory, setSelectedCategory] = useState<BudgetCategory | null>(null)
   const [addingCategory, setAddingCategory] = useState(false)
+  const [selectedGoal, setSelectedGoal] = useState<SavingsGoal | null>(null)
+  const [addingGoal, setAddingGoal] = useState(false)
   const month = useMemo(() => addMonths(anchorDate, monthOffset), [anchorDate, monthOffset])
 
   const itemsInMonth = useMemo(
@@ -146,7 +150,55 @@ export function BudgetPage() {
         </button>
       )}
 
+      <div className="flex flex-col gap-3">
+        <h3 className="px-1 text-[15px] font-semibold text-white">Megtakarítási célok</h3>
+        {savingsGoals.map((goal) => {
+          const saved = savingsContributions
+            .filter((c) => c.goalId === goal.id)
+            .reduce((sum, c) => sum + c.amount, 0)
+          const percent = goal.targetAmount > 0 ? Math.min(Math.round((saved / goal.targetAmount) * 100), 100) : 0
+          return (
+            <Card key={goal.id} className="p-4" onClick={() => setSelectedGoal(goal)}>
+              <div className="flex items-center gap-2">
+                <span
+                  className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full"
+                  style={{ backgroundColor: `color-mix(in srgb, ${goal.color} 25%, transparent)`, color: goal.color }}
+                >
+                  <SectionIcon icon={goal.icon} />
+                </span>
+                <span className="font-semibold text-white">{goal.name}</span>
+                <span className="ml-auto text-[13px] text-white/50">
+                  {formatHUF(saved)} / {formatHUF(goal.targetAmount)}
+                </span>
+              </div>
+              <div className="mt-3 h-2 overflow-hidden rounded-full bg-white/10">
+                <div className="h-full rounded-full" style={{ width: `${percent}%`, backgroundColor: goal.color }} />
+              </div>
+            </Card>
+          )
+        })}
+        <button
+          onClick={() => setAddingGoal(true)}
+          className="rounded-pill border border-white/15 bg-white/5 px-4 py-3 text-[15px] font-semibold text-white active:bg-white/10"
+        >
+          + Új megtakarítási cél
+        </button>
+      </div>
+
       <CategoryDetailSheet category={selectedCategory} onClose={() => setSelectedCategory(null)} month={month} />
+      <GoalDetailSheet goal={selectedGoal} onClose={() => setSelectedGoal(null)} />
+
+      <BottomSheet open={addingGoal} onClose={() => setAddingGoal(false)}>
+        <h2 className="mb-4 text-center text-[17px] font-bold text-white">Új megtakarítási cél</h2>
+        <GoalForm
+          submitLabel="Cél létrehozása"
+          onCancel={() => setAddingGoal(false)}
+          onSubmit={async (input) => {
+            await createGoal(input)
+            setAddingGoal(false)
+          }}
+        />
+      </BottomSheet>
 
       <BottomSheet open={addingCategory} onClose={() => setAddingCategory(false)}>
         <h2 className="mb-4 text-center text-[17px] font-bold text-white">Új kategória</h2>

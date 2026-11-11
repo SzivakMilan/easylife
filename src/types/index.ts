@@ -56,6 +56,22 @@ export interface Bill {
   reminderOffsetMinutes?: number
 }
 
+export interface SavingsGoal {
+  id: string
+  name: string
+  color: string
+  icon: string
+  targetAmount: number
+}
+
+export interface SavingsContribution {
+  id: string
+  goalId: string
+  amount: number
+  note?: string
+  occurredOn: string
+}
+
 export interface BudgetCategory {
   id: string
   name: string

@@ -376,6 +376,52 @@ isOneToOne: false
       referencedColumns: ["id"]
     }
                   ]
+                },"savings_contributions": {
+                  Row: {
+                    "amount": number,"created_at": string,"created_by": string,"goal_id": string,"household_id": string,"id": string,"note": string | null,"occurred_on": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "amount": number,"created_at"?: string,"created_by": string,"goal_id": string,"household_id": string,"id"?: string,"note"?: string | null,"occurred_on": string
+                  }
+                  Update: {
+                    "amount"?: number,"created_at"?: string,"created_by"?: string,"goal_id"?: string,"household_id"?: string,"id"?: string,"note"?: string | null,"occurred_on"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "savings_contributions_goal_id_fkey"
+      columns: ["goal_id"]
+isOneToOne: false
+      referencedRelation: "savings_goals"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "savings_contributions_household_id_fkey"
+      columns: ["household_id"]
+isOneToOne: false
+      referencedRelation: "households"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"savings_goals": {
+                  Row: {
+                    "color": string,"created_at": string,"created_by": string,"household_id": string,"icon": string,"id": string,"name": string,"target_amount": number
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "color": string,"created_at"?: string,"created_by": string,"household_id": string,"icon": string,"id"?: string,"name": string,"target_amount": number
+                  }
+                  Update: {
+                    "color"?: string,"created_at"?: string,"created_by"?: string,"household_id"?: string,"icon"?: string,"id"?: string,"name"?: string,"target_amount"?: number
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "savings_goals_household_id_fkey"
+      columns: ["household_id"]
+isOneToOne: false
+      referencedRelation: "households"
+      referencedColumns: ["id"]
+    }
+                  ]
                 }
           }
           Views: {
