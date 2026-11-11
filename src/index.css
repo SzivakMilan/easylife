@@ -66,6 +66,12 @@ button {
      ezért itt visszavesszük. */
   appearance: none;
   -webkit-appearance: none;
+  background-image: none;
+  /* Safari/WebKit a form-elemek (gomb, input, select) szövegét ettől
+     függetlenül, egy rendszer-színnel rajzolhatja ki, a `color`-tól eltérően -
+     enélkül a fenti appearance-reset önmagában nem elég ahhoz, hogy a
+     ténylegesen beállított szövegszín (pl. text-black) látszódjon. */
+  -webkit-text-fill-color: currentColor;
 }
 
 @media (prefers-reduced-motion: reduce) {
