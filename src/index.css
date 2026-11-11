@@ -1,0 +1,73 @@
+@import 'tailwindcss';
+
+:root {
+  color-scheme: dark;
+
+  /* Szekciószínek: a felcsúszó lapok és a háttér-gradiens közös akcentszíne */
+  --section-home-accent: #34d399;
+  --section-deadlines-accent: #fb923c;
+  --section-events-accent: #60a5fa;
+  --section-budget-accent: #2dd4bf;
+  --section-bills-accent: #a78bfa;
+  --section-family-accent: #fb7185;
+  --section-settings-accent: #9ca3af;
+
+  --radius-card: 22px;
+  --radius-pill: 999px;
+
+  --safe-top: env(safe-area-inset-top);
+  --safe-bottom: env(safe-area-inset-bottom);
+  --safe-left: env(safe-area-inset-left);
+  --safe-right: env(safe-area-inset-right);
+}
+
+@theme {
+  --font-sans: -apple-system, 'SF Pro Text', system-ui, 'Segoe UI', Roboto, sans-serif;
+
+  --color-section-home: var(--section-home-accent);
+  --color-section-deadlines: var(--section-deadlines-accent);
+  --color-section-events: var(--section-events-accent);
+  --color-section-budget: var(--section-budget-accent);
+  --color-section-bills: var(--section-bills-accent);
+  --color-section-family: var(--section-family-accent);
+  --color-section-settings: var(--section-settings-accent);
+
+  --radius-card: var(--radius-card);
+  --radius-pill: var(--radius-pill);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  min-height: 100dvh;
+  background: #050505;
+  color: #f5f5f7;
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  font-variant-numeric: tabular-nums;
+}
+
+#root {
+  min-height: 100dvh;
+}
+
+button {
+  font-family: inherit;
+  color: inherit;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
