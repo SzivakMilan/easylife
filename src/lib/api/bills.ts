@@ -162,3 +162,16 @@ export async function getBillFileSignedUrl(path: string): Promise<string> {
   if (error || !data) throw error ?? new Error('Nem sikerült megnyitni a fájlt')
   return data.signedUrl
 }
+
+/**
+ * Törli a számlát és a csatolt fájlt. Ha már be volt fizetve, a költségvetésbe
+ * könyvelt kiadás MEGMARAD (budget_items.source_bill_id -> ON DELETE SET NULL).
+ */
+export async function deleteBill(bill: Bill): Promise<void> {
+  const { error } = await supabase.from('bills').delete().eq('id', bill.id)
+  if (error) throw error
+  if (bill.filePath) {
+    // ugyanazt a fájlt egy ismétlődő számla következő példánya nem használja; hiba esetén csak árva fájl marad
+    await supabase.storage.from('bills').remove([bill.filePath])
+  }
+}

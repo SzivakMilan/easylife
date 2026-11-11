@@ -2,6 +2,7 @@ import { useRef, useState } from 'react'
 import { BottomSheet } from '../../components/ui/BottomSheet'
 import { AttachmentViewer } from '../../components/ui/AttachmentViewer'
 import { AvatarStack } from '../../components/ui/Avatar'
+import { ConfirmDeleteButton } from '../../components/ui/ConfirmDeleteButton'
 import { formatHUF } from '../../lib/currency'
 import { formatFullDate, parseDate, formatTime } from '../../lib/dateUtils'
 import { TYPE_META } from '../../lib/sections'
@@ -40,9 +41,9 @@ export function ItemDetailSheet({ item, onClose }: ItemDetailSheetProps) {
 
 function DetailContent({ item, onClose }: { item: AgendaItem; onClose: () => void }) {
   const { members } = useHousehold()
-  const { deadlines, markDone, update: updateDeadline } = useDeadlines()
-  const { events, update: updateEvent } = useEvents()
-  const { bills, markPaid, update: updateBill } = useBills()
+  const { deadlines, markDone, update: updateDeadline, remove: removeDeadline } = useDeadlines()
+  const { events, update: updateEvent, remove: removeEvent } = useEvents()
+  const { bills, markPaid, update: updateBill, remove: removeBill } = useBills()
   const [mode, setMode] = useState<'view' | 'edit'>('view')
   const [fileError, setFileError] = useState<string | null>(null)
   const [viewerUrl, setViewerUrl] = useState<string | null>(null)
@@ -99,6 +100,14 @@ function DetailContent({ item, onClose }: { item: AgendaItem; onClose: () => voi
           </ActionButton>
           <ActionButton onClick={() => setMode('edit')}>Szerkesztés</ActionButton>
         </div>
+        <ConfirmDeleteButton
+          question="Biztosan törlöd ezt a határidőt?"
+          warning={deadline.recurrence !== 'none' ? 'Ismétlődő határidő: a teljes sorozat törlődik.' : undefined}
+          onConfirm={async () => {
+            await removeDeadline(deadline.id)
+            onClose()
+          }}
+        />
       </div>
     )
   }
@@ -149,6 +158,13 @@ function DetailContent({ item, onClose }: { item: AgendaItem; onClose: () => voi
             Szerkesztés
           </ActionButton>
         </div>
+        <ConfirmDeleteButton
+          question="Biztosan törlöd ezt az időpontot?"
+          onConfirm={async () => {
+            await removeEvent(event.id)
+            onClose()
+          }}
+        />
       </div>
     )
   }
@@ -219,6 +235,20 @@ function DetailContent({ item, onClose }: { item: AgendaItem; onClose: () => voi
         </ActionButton>
         <ActionButton onClick={() => setMode('edit')}>Szerkesztés</ActionButton>
       </div>
+      <ConfirmDeleteButton
+        question="Biztosan törlöd ezt a számlát?"
+        warning={
+          bill.status === 'paid'
+            ? 'A költségvetésbe már könyvelt kiadás megmarad.'
+            : bill.filePath
+              ? 'A csatolt fájl is törlődik.'
+              : undefined
+        }
+        onConfirm={async () => {
+          await removeBill(bill)
+          onClose()
+        }}
+      />
       {history.length > 0 && (
         <div className="rounded-card border border-white/10 bg-black/20 p-4">
           <h3 className="text-center text-[15px] font-semibold text-white">Előzmények</h3>
@@ -253,7 +283,7 @@ function ActionButton({
       onClick={onClick}
       disabled={disabled}
       className={`flex-1 rounded-pill px-4 py-2.5 text-[14px] font-semibold transition-colors disabled:opacity-50 ${
-        primary ? 'bg-white text-black' : 'border border-white/20 bg-white/5 text-white active:bg-white/10'
+        primary ? 'bg-[var(--accent)] text-black' : 'border border-white/20 bg-white/5 text-white active:bg-white/10'
       }`}
     >
       {children}

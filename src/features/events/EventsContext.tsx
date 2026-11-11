@@ -1,5 +1,5 @@
 import { createContext, useCallback, useContext, useEffect, useState, type ReactNode } from 'react'
-import { createEvent, fetchEvents, updateEvent, type EventInput } from '../../lib/api/events'
+import { createEvent, deleteEvent, fetchEvents, updateEvent, type EventInput } from '../../lib/api/events'
 import { notifyNewItem } from '../../lib/api/notify'
 import { useAuth } from '../auth/AuthContext'
 import { useHousehold } from '../household/HouseholdContext'
@@ -11,6 +11,7 @@ interface EventsContextValue {
   refresh: () => Promise<void>
   create: (input: EventInput) => Promise<void>
   update: (id: string, input: EventInput) => Promise<void>
+  remove: (id: string) => Promise<void>
 }
 
 const EventsContext = createContext<EventsContextValue | null>(null)
@@ -49,8 +50,13 @@ export function EventsProvider({ children }: { children: ReactNode }) {
     await refresh()
   }
 
+  async function remove(id: string) {
+    await deleteEvent(id)
+    await refresh()
+  }
+
   return (
-    <EventsContext.Provider value={{ events, loading, refresh, create, update }}>{children}</EventsContext.Provider>
+    <EventsContext.Provider value={{ events, loading, refresh, create, update, remove }}>{children}</EventsContext.Provider>
   )
 }
 

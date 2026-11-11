@@ -119,3 +119,9 @@ export async function setDeadlineDone(id: string, done: boolean): Promise<void> 
   const { error } = await supabase.from('deadlines').update({ done }).eq('id', id)
   if (error) throw error
 }
+
+export async function deleteDeadline(id: string): Promise<void> {
+  // A felelősök/nézők (deadline_assignees, deadline_viewers) ON DELETE CASCADE-del törlődnek
+  const { error } = await supabase.from('deadlines').delete().eq('id', id)
+  if (error) throw error
+}

@@ -1,11 +1,17 @@
 import { createContext, useCallback, useContext, useEffect, useState, type ReactNode } from 'react'
 import { supabase } from '../../lib/supabaseClient'
 import { useAuth } from '../auth/AuthContext'
-import type { ConnectedMember, HouseholdMember, Invite } from '../../types/household'
+import type { ConnectedMember, HouseholdMember, Invite, MyHousehold } from '../../types/household'
 
 interface HouseholdContextValue {
   loading: boolean
   household: { id: string; name: string } | null
+  /** Az összes háztartás, aminek a user tagja (váltáshoz). */
+  households: MyHousehold[]
+  /** Új háztartás létrehozása / csatlakozás folyamatban (meglévő háztartás mellé). */
+  addingHousehold: boolean
+  setAddingHousehold: (v: boolean) => void
+  switchHousehold: (householdId: string) => Promise<{ error: string | null }>
   myMember: HouseholdMember | null
   members: HouseholdMember[]
   connectedMembers: ConnectedMember[]
@@ -42,6 +48,8 @@ export function HouseholdProvider({ children }: { children: ReactNode }) {
   const { user } = useAuth()
   const [loading, setLoading] = useState(true)
   const [household, setHousehold] = useState<{ id: string; name: string } | null>(null)
+  const [households, setHouseholds] = useState<MyHousehold[]>([])
+  const [addingHousehold, setAddingHousehold] = useState(false)
   const [myMember, setMyMember] = useState<HouseholdMember | null>(null)
   const [members, setMembers] = useState<HouseholdMember[]>([])
   const [connectedMembers, setConnectedMembers] = useState<ConnectedMember[]>([])
@@ -49,6 +57,7 @@ export function HouseholdProvider({ children }: { children: ReactNode }) {
   const refresh = useCallback(async () => {
     if (!user) {
       setHousehold(null)
+      setHouseholds([])
       setMyMember(null)
       setMembers([])
       setConnectedMembers([])
@@ -58,7 +67,26 @@ export function HouseholdProvider({ children }: { children: ReactNode }) {
 
     setLoading(true)
 
-    const { data: mine } = await supabase.from('household_members').select('*').eq('user_id', user.id).maybeSingle()
+    const { data: hhRows } = await supabase.rpc('my_households')
+    const list: MyHousehold[] = ((hhRows ?? []) as unknown as {
+      household_id: string
+      name: string
+      member_id: string
+      role: string
+      is_active: boolean
+    }[]).map((r) => ({
+      id: r.household_id,
+      name: r.name,
+      memberId: r.member_id,
+      role: r.role === 'owner' ? 'owner' : 'member',
+      isActive: r.is_active,
+    }))
+    setHouseholds(list)
+    const active = list.find((h) => h.isActive) ?? list[0]
+
+    const { data: mine } = active
+      ? await supabase.from('household_members').select('*').eq('id', active.memberId).maybeSingle()
+      : { data: null }
 
     if (!mine) {
       setHousehold(null)
@@ -98,6 +126,13 @@ export function HouseholdProvider({ children }: { children: ReactNode }) {
     refresh()
   }, [refresh])
 
+  async function switchHousehold(householdId: string) {
+    const { error } = await supabase.rpc('set_active_household', { p_household_id: householdId })
+    if (error) return { error: error.message }
+    await refresh()
+    return { error: null }
+  }
+
   async function createHousehold(name: string, displayName: string, avatarColor: string) {
     const { error } = await supabase.rpc('create_household', {
       p_name: name,
@@ -105,6 +140,7 @@ export function HouseholdProvider({ children }: { children: ReactNode }) {
       p_avatar_color: avatarColor,
     })
     if (error) return { error: error.message }
+    setAddingHousehold(false)
     await refresh()
     return { error: null }
   }
@@ -116,6 +152,7 @@ export function HouseholdProvider({ children }: { children: ReactNode }) {
       p_avatar_color: avatarColor,
     })
     if (error) return { error: error.message }
+    setAddingHousehold(false)
     await refresh()
     return { error: null }
   }
@@ -159,6 +196,10 @@ export function HouseholdProvider({ children }: { children: ReactNode }) {
       value={{
         loading,
         household,
+        households,
+        addingHousehold,
+        setAddingHousehold,
+        switchHousehold,
         myMember,
         members,
         connectedMembers,

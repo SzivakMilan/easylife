@@ -3,6 +3,7 @@ import {
   createBudgetCategory,
   createBudgetItem,
   deleteBudgetItem,
+  deleteBudgetCategory,
   fetchBudgetCategories,
   fetchBudgetItems,
   updateBudgetCategory,
@@ -34,6 +35,7 @@ interface BudgetContextValue {
   refresh: () => Promise<void>
   createCategory: (input: CategoryInput) => Promise<void>
   updateCategory: (id: string, input: CategoryInput) => Promise<void>
+  deleteCategory: (id: string) => Promise<void>
   createItem: (input: BudgetItemInput) => Promise<void>
   updateItem: (id: string, input: BudgetItemInput) => Promise<void>
   deleteItem: (id: string) => Promise<void>
@@ -93,6 +95,11 @@ export function BudgetProvider({ children }: { children: ReactNode }) {
     await refresh()
   }
 
+  async function deleteCategory(id: string) {
+    await deleteBudgetCategory(id)
+    await refresh()
+  }
+
   async function createItem(input: BudgetItemInput) {
     if (!household || !user) throw new Error('Nincs háztartásod')
     await createBudgetItem(household.id, user.id, input)
@@ -147,6 +154,7 @@ export function BudgetProvider({ children }: { children: ReactNode }) {
         refresh,
         createCategory,
         updateCategory,
+        deleteCategory,
         createItem,
         updateItem,
         deleteItem,

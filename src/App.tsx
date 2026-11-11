@@ -21,7 +21,7 @@ import { OnboardingPage } from './features/household/OnboardingPage'
 
 function App() {
   const { user, loading: authLoading } = useAuth()
-  const { loading: householdLoading, household } = useHousehold()
+  const { loading: householdLoading, household, addingHousehold } = useHousehold()
 
   if (authLoading || (user && householdLoading)) {
     return <div className="min-h-dvh bg-[#050505]" />
@@ -31,7 +31,7 @@ function App() {
     return <LoginPage />
   }
 
-  if (!household) {
+  if (!household || addingHousehold) {
     return <OnboardingPage />
   }
 

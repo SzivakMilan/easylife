@@ -1,6 +1,8 @@
 import { isSameMonth } from 'date-fns'
 import { useRef, useState } from 'react'
 import { BottomSheet } from '../../components/ui/BottomSheet'
+import { ConfirmDeleteButton } from '../../components/ui/ConfirmDeleteButton'
+import { useBills } from '../bills/BillsContext'
 import { formatHUF } from '../../lib/currency'
 import { formatFullDate, parseDate } from '../../lib/dateUtils'
 import { SectionIcon } from '../../components/ui/icons'
@@ -18,7 +20,8 @@ interface CategoryDetailSheetProps {
 type Mode = 'view' | 'edit-category' | 'add-item'
 
 export function CategoryDetailSheet({ category, onClose, month }: CategoryDetailSheetProps) {
-  const { categories, items, updateCategory, createItem, deleteItem } = useBudget()
+  const { categories, items, updateCategory, deleteCategory, createItem, deleteItem } = useBudget()
+  const { refresh: refreshBills } = useBills()
   const [mode, setMode] = useState<Mode>('view')
   const lastRef = useRef<BudgetCategory | null>(category)
   if (category) lastRef.current = category
@@ -56,6 +59,18 @@ export function CategoryDetailSheet({ category, onClose, month }: CategoryDetail
               setMode('view')
             }}
           />
+          <div className="mt-4">
+            <ConfirmDeleteButton
+              label="Kategória törlése"
+              question={`Biztosan törlöd a(z) „${live.name}” kategóriát?`}
+              warning="A kategória összes kiadása és bevétele is törlődik (minden hónapból). A hozzá rendelt számlák megmaradnak, kategória nélkül."
+              onConfirm={async () => {
+                await deleteCategory(live.id)
+                await refreshBills()
+                handleClose()
+              }}
+            />
+          </div>
         </div>
       )}
 
@@ -131,9 +146,11 @@ export function CategoryDetailSheet({ category, onClose, month }: CategoryDetail
                         {formatHUF(item.amount)}
                       </span>
                       <button
-                        onClick={() => deleteItem(item.id)}
+                        onClick={() => {
+                          if (window.confirm('Biztosan törlöd ezt a tételt?')) deleteItem(item.id)
+                        }}
                         aria-label="Törlés"
-                        className="text-white/30 active:text-red-400"
+                        className="-mr-2 flex h-9 w-9 items-center justify-center rounded-full text-[16px] text-white/60 active:bg-red-500/20 active:text-red-400"
                       >
                         ✕
                       </button>

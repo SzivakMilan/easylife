@@ -83,7 +83,7 @@ export function GoalForm({ initial, onSubmit, onCancel, submitLabel }: GoalFormP
               type="button"
               onClick={() => setIcon(i)}
               className={`flex h-10 w-10 items-center justify-center rounded-full border ${
-                icon === i ? 'border-white bg-white text-black' : 'border-white/15 bg-white/5 text-white/70'
+                icon === i ? 'border-[var(--accent)] bg-[var(--accent)] text-black' : 'border-white/15 bg-white/5 text-white/70'
               }`}
             >
               <SectionIcon icon={i} />
@@ -95,7 +95,7 @@ export function GoalForm({ initial, onSubmit, onCancel, submitLabel }: GoalFormP
       <button
         type="submit"
         disabled={busy}
-        className="mt-1 rounded-pill bg-white px-4 py-3 text-[15px] font-semibold text-black disabled:opacity-50"
+        className="mt-1 rounded-pill bg-[var(--accent)] px-4 py-3 text-[15px] font-semibold text-black disabled:opacity-50"
       >
         {busy ? 'Mentés...' : (submitLabel ?? 'Mentés')}
       </button>
