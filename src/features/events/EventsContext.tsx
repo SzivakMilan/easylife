@@ -1,5 +1,6 @@
 import { createContext, useCallback, useContext, useEffect, useState, type ReactNode } from 'react'
 import { createEvent, fetchEvents, updateEvent, type EventInput } from '../../lib/api/events'
+import { notifyNewItem } from '../../lib/api/notify'
 import { useAuth } from '../auth/AuthContext'
 import { useHousehold } from '../household/HouseholdContext'
 import type { EventItem } from '../../types'
@@ -38,7 +39,8 @@ export function EventsProvider({ children }: { children: ReactNode }) {
 
   async function create(input: EventInput) {
     if (!household || !user) throw new Error('Nincs háztartásod')
-    await createEvent(household.id, user.id, input)
+    const id = await createEvent(household.id, user.id, input)
+    notifyNewItem('events', id)
     await refresh()
   }
 

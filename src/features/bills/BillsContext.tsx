@@ -1,5 +1,6 @@
 import { createContext, useCallback, useContext, useEffect, useState, type ReactNode } from 'react'
 import { createBill, fetchBills, markBillPaid, updateBill, type BillInput } from '../../lib/api/bills'
+import { notifyNewItem } from '../../lib/api/notify'
 import { useAuth } from '../auth/AuthContext'
 import { useHousehold } from '../household/HouseholdContext'
 import { useBudget } from '../budget/BudgetContext'
@@ -41,7 +42,8 @@ export function BillsProvider({ children }: { children: ReactNode }) {
 
   async function create(input: BillInput) {
     if (!household || !user) throw new Error('Nincs háztartásod')
-    await createBill(household.id, user.id, input)
+    const id = await createBill(household.id, user.id, input)
+    notifyNewItem('bills', id)
     await refresh()
   }
 

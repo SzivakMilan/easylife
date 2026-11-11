@@ -3,18 +3,9 @@
 // Egy tételhez TÖBB emlékeztető-időpont is tartozhat (reminder_offsets) - mindegyikhez
 // külön-külön, csak egyszer küld push-t (notified_offsets tárolja, melyikhez ment már).
 
-import { createClient } from 'npm:@supabase/supabase-js@2'
-import webpush from 'npm:web-push@3.6.7'
+import { createAdminClient, sendPushToMembers } from '../_shared/push.ts'
 
-const SUPABASE_URL = Deno.env.get('SUPABASE_URL')!
-const SERVICE_ROLE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
-const VAPID_PUBLIC_KEY = Deno.env.get('VAPID_PUBLIC_KEY')!
-const VAPID_PRIVATE_KEY = Deno.env.get('VAPID_PRIVATE_KEY')!
-const VAPID_SUBJECT = Deno.env.get('VAPID_SUBJECT')!
-
-webpush.setVapidDetails(VAPID_SUBJECT, VAPID_PUBLIC_KEY, VAPID_PRIVATE_KEY)
-
-const supabase = createClient(SUPABASE_URL, SERVICE_ROLE_KEY)
+const supabase = createAdminClient()
 
 type TableName = 'deadlines' | 'events' | 'bills'
 
@@ -49,27 +40,8 @@ async function sendForItem(item: NotifyItem) {
     ...(members ?? []).map((m: { id: string }) => m.id),
     ...(viewers ?? []).map((v: { member_id: string }) => v.member_id),
   ])
-  if (memberIds.size === 0) return
 
-  const { data: subscriptions } = await supabase
-    .from('push_subscriptions')
-    .select('endpoint, p256dh, auth')
-    .in('member_id', [...memberIds])
-
-  const payload = JSON.stringify({ title: item.title, body: item.body, url: '/' })
-
-  await Promise.all(
-    (subscriptions ?? []).map(async (sub: { endpoint: string; p256dh: string; auth: string }) => {
-      try {
-        await webpush.sendNotification({ endpoint: sub.endpoint, keys: { p256dh: sub.p256dh, auth: sub.auth } }, payload)
-      } catch (err) {
-        const statusCode = (err as { statusCode?: number }).statusCode
-        if (statusCode === 404 || statusCode === 410) {
-          await supabase.from('push_subscriptions').delete().eq('endpoint', sub.endpoint)
-        }
-      }
-    }),
-  )
+  await sendPushToMembers(supabase, memberIds, { title: item.title, body: item.body })
 }
 
 /** Az adott offsetet elküldöttként jelöli, és frissíti a "legutóbb értesítve" időbélyeget. */

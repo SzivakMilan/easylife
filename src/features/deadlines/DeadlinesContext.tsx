@@ -1,5 +1,6 @@
 import { createContext, useCallback, useContext, useEffect, useState, type ReactNode } from 'react'
 import { createDeadline, fetchDeadlines, setDeadlineDone, updateDeadline, type DeadlineInput } from '../../lib/api/deadlines'
+import { notifyNewItem } from '../../lib/api/notify'
 import { useAuth } from '../auth/AuthContext'
 import { useHousehold } from '../household/HouseholdContext'
 import type { Deadline } from '../../types'
@@ -39,7 +40,8 @@ export function DeadlinesProvider({ children }: { children: ReactNode }) {
 
   async function create(input: DeadlineInput) {
     if (!household || !user) throw new Error('Nincs háztartásod')
-    await createDeadline(household.id, user.id, input)
+    const id = await createDeadline(household.id, user.id, input)
+    notifyNewItem('deadlines', id)
     await refresh()
   }
 
