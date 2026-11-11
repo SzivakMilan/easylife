@@ -59,6 +59,13 @@ body {
 button {
   font-family: inherit;
   color: inherit;
+  /* A Tailwind preflight iOS Safari-n appearance:button-t ad a gomboknak (a
+     border-radius hibát javítva), de ez visszahozza a natív Safari-gomb
+     kinézetét, ami ráfest a saját bg-/text-színeinkre (halvány, olvashatatlan
+     szöveg). Mi mindenhol saját háttér/keret/szín stílust adunk a gomboknak,
+     ezért itt visszavesszük. */
+  appearance: none;
+  -webkit-appearance: none;
 }
 
 @media (prefers-reduced-motion: reduce) {
