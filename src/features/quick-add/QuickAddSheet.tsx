@@ -9,8 +9,9 @@ import { BudgetItemForm } from '../budget/BudgetItemForm'
 import { useBudget } from '../budget/BudgetContext'
 import { BillForm } from '../bills/BillForm'
 import { useBills } from '../bills/BillsContext'
+import { useShopping } from '../shopping/ShoppingContext'
 
-export type QuickAddKind = 'deadline' | 'event' | 'bill' | 'expense'
+export type QuickAddKind = 'deadline' | 'event' | 'bill' | 'expense' | 'shopping-item'
 
 interface QuickAddSheetProps {
   open: boolean
@@ -23,6 +24,7 @@ const OPTIONS: { key: QuickAddKind; label: string; icon: string }[] = [
   { key: 'event', label: 'Időpont', icon: 'calendar' },
   { key: 'bill', label: 'Számla', icon: 'receipt' },
   { key: 'expense', label: 'Kiadás', icon: 'wallet' },
+  { key: 'shopping-item', label: 'Bevásárló tétel', icon: 'cart' },
 ]
 
 export function QuickAddSheet({ open, onClose, forcedKind = null }: QuickAddSheetProps) {
@@ -31,11 +33,14 @@ export function QuickAddSheet({ open, onClose, forcedKind = null }: QuickAddShee
   const { create: createEvent } = useEvents()
   const { categories, createItem } = useBudget()
   const { create: createBill } = useBills()
+  const { create: createShoppingItem } = useShopping()
+  const [shoppingName, setShoppingName] = useState('')
 
   const effectiveKind = forcedKind ?? kind
 
   function handleClose() {
     setKind(null)
+    setShoppingName('')
     onClose()
   }
 
@@ -120,6 +125,36 @@ export function QuickAddSheet({ open, onClose, forcedKind = null }: QuickAddShee
                 handleClose()
               }}
             />
+          )}
+          {effectiveKind === 'shopping-item' && (
+            <form
+              onSubmit={async (e) => {
+                e.preventDefault()
+                const trimmed = shoppingName.trim()
+                if (!trimmed) return
+                await createShoppingItem(trimmed)
+                handleClose()
+              }}
+              className="flex flex-col gap-3"
+            >
+              <input
+                autoFocus
+                placeholder="Tétel neve (pl. Tej)"
+                value={shoppingName}
+                onChange={(e) => setShoppingName(e.target.value)}
+                className="rounded-2xl border border-white/15 bg-white/5 px-4 py-3 text-[16px] text-white placeholder:text-white/35 focus:outline-none"
+              />
+              <button
+                type="submit"
+                disabled={!shoppingName.trim()}
+                className="mt-1 rounded-pill bg-white px-4 py-3 text-[15px] font-semibold text-black disabled:opacity-50"
+              >
+                Hozzáadás
+              </button>
+              <button type="button" onClick={handleBack} className="text-[14px] font-medium text-white/50">
+                Mégse
+              </button>
+            </form>
           )}
         </div>
       )}

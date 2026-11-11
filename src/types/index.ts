@@ -4,6 +4,7 @@ export type SectionKey =
   | 'events'
   | 'budget'
   | 'bills'
+  | 'shopping'
   | 'family'
   | 'settings'
 
@@ -54,6 +55,13 @@ export interface Bill {
   recurrence: Recurrence
   filePath?: string
   reminderOffsets: number[]
+}
+
+export interface ShoppingItem {
+  id: string
+  name: string
+  checked: boolean
+  createdAt: string
 }
 
 export interface SavingsGoal {

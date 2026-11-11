@@ -9,6 +9,7 @@
   --section-events-accent: #60a5fa;
   --section-budget-accent: #2dd4bf;
   --section-bills-accent: #a78bfa;
+  --section-shopping-accent: #fbbf24;
   --section-family-accent: #fb7185;
   --section-settings-accent: #9ca3af;
 
@@ -29,6 +30,7 @@
   --color-section-events: var(--section-events-accent);
   --color-section-budget: var(--section-budget-accent);
   --color-section-bills: var(--section-bills-accent);
+  --color-section-shopping: var(--section-shopping-accent);
   --color-section-family: var(--section-family-accent);
   --color-section-settings: var(--section-settings-accent);
 

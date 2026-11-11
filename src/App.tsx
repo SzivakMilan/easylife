@@ -10,6 +10,7 @@ import { DeadlinesPage } from './features/deadlines/DeadlinesPage'
 import { EventsPage } from './features/events/EventsPage'
 import { BudgetPage } from './features/budget/BudgetPage'
 import { BillsPage } from './features/bills/BillsPage'
+import { ShoppingPage } from './features/shopping/ShoppingPage'
 import { FamilyPage } from './features/family/FamilyPage'
 import { SettingsPage } from './features/settings/SettingsPage'
 import { SearchPage } from './features/search/SearchPage'
@@ -43,6 +44,7 @@ const SECTION_QUICK_ADD_KIND: Partial<Record<string, QuickAddKind>> = {
   events: 'event',
   budget: 'expense',
   bills: 'bill',
+  shopping: 'shopping-item',
 }
 
 function AppShell() {
@@ -60,6 +62,7 @@ function AppShell() {
           <Route path="/idopontok" element={<EventsPage />} />
           <Route path="/koltsegvetes" element={<BudgetPage />} />
           <Route path="/szamlak" element={<BillsPage />} />
+          <Route path="/bevasarlas" element={<ShoppingPage />} />
           <Route path="/csaladtagok" element={<FamilyPage />} />
           <Route path="/beallitasok" element={<SettingsPage />} />
           <Route path="/kereses" element={<SearchPage />} />
