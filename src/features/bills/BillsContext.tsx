@@ -1,5 +1,5 @@
 import { createContext, useCallback, useContext, useEffect, useState, type ReactNode } from 'react'
-import { createBill, fetchBills, markBillPaid, updateBill, type BillInput } from '../../lib/api/bills'
+import { createBill, deleteBill, fetchBills, markBillPaid, updateBill, type BillInput } from '../../lib/api/bills'
 import { notifyNewItem } from '../../lib/api/notify'
 import { useAuth } from '../auth/AuthContext'
 import { useHousehold } from '../household/HouseholdContext'
@@ -13,6 +13,7 @@ interface BillsContextValue {
   create: (input: BillInput) => Promise<void>
   update: (id: string, input: BillInput) => Promise<void>
   markPaid: (bill: Bill) => Promise<void>
+  remove: (bill: Bill) => Promise<void>
 }
 
 const BillsContext = createContext<BillsContextValue | null>(null)
@@ -58,8 +59,13 @@ export function BillsProvider({ children }: { children: ReactNode }) {
     await Promise.all([refresh(), refreshBudget()])
   }
 
+  async function remove(bill: Bill) {
+    await deleteBill(bill)
+    await refresh()
+  }
+
   return (
-    <BillsContext.Provider value={{ bills, loading, refresh, create, update, markPaid }}>
+    <BillsContext.Provider value={{ bills, loading, refresh, create, update, markPaid, remove }}>
       {children}
     </BillsContext.Provider>
   )

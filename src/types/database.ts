@@ -498,6 +498,18 @@ isOneToOne: false
 "my_household_id":
 { Args: Record<PropertyKey, never>; Returns: string
                            },
+"my_households":
+{ Args: Record<PropertyKey, never>; Returns: {
+              "household_id": string,
+"is_active": boolean,
+"member_id": string,
+"name": string,
+"role": string
+            }[]
+                           },
+"set_active_household":
+{ Args: { "p_household_id": string }; Returns: undefined
+                           },
 "redeem_household_link_invite":
 { Args: { "invite_code": string }; Returns: {
               "created_at": string,

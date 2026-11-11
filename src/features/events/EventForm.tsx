@@ -121,7 +121,7 @@ export function EventForm({ initial, onSubmit, onCancel, submitLabel }: EventFor
               onClick={() => toggle(participantIds, setParticipantIds, m.id)}
               className={`rounded-pill border px-3 py-1.5 text-[13px] font-medium ${
                 participantIds.includes(m.id)
-                  ? 'border-white bg-white text-black'
+                  ? 'border-[var(--accent)] bg-[var(--accent)] text-black'
                   : 'border-white/15 bg-white/5 text-white/80'
               }`}
             >
@@ -142,7 +142,7 @@ export function EventForm({ initial, onSubmit, onCancel, submitLabel }: EventFor
                 onClick={() => toggle(viewerIds, setViewerIds, m.id)}
                 className={`rounded-pill border px-3 py-1.5 text-[13px] font-medium ${
                   viewerIds.includes(m.id)
-                    ? 'border-white bg-white text-black'
+                    ? 'border-[var(--accent)] bg-[var(--accent)] text-black'
                     : 'border-white/15 bg-white/5 text-white/80'
                 }`}
               >
@@ -158,7 +158,7 @@ export function EventForm({ initial, onSubmit, onCancel, submitLabel }: EventFor
       <button
         type="submit"
         disabled={busy}
-        className="mt-1 rounded-pill bg-white px-4 py-3 text-[15px] font-semibold text-black disabled:opacity-50"
+        className="mt-1 rounded-pill bg-[var(--accent)] px-4 py-3 text-[15px] font-semibold text-black disabled:opacity-50"
       >
         {busy ? 'Mentés...' : (submitLabel ?? 'Mentés')}
       </button>

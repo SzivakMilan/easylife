@@ -124,7 +124,7 @@ export function BudgetPage() {
           <p className="text-[15px] text-white/60">Még nincs költségvetési kategóriád.</p>
           <button
             onClick={() => setAddingCategory(true)}
-            className="rounded-pill bg-white px-4 py-2.5 text-[14px] font-semibold text-black"
+            className="rounded-pill bg-[var(--accent)] px-4 py-2.5 text-[14px] font-semibold text-black"
           >
             + Első kategória létrehozása
           </button>

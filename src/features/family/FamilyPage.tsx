@@ -134,7 +134,7 @@ export function FamilyPage() {
           <button
             type="submit"
             disabled={busy}
-            className="rounded-pill bg-white px-4 text-[14px] font-semibold text-black disabled:opacity-50"
+            className="rounded-pill bg-[var(--accent)] px-4 text-[14px] font-semibold text-black disabled:opacity-50"
           >
             Összekapcsolás
           </button>

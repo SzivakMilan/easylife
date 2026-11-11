@@ -120,3 +120,12 @@ export async function deleteBudgetItem(id: string): Promise<void> {
   const { error } = await supabase.from('budget_items').delete().eq('id', id)
   if (error) throw error
 }
+
+/** Törli a kategóriát a benne lévő tételekkel együtt (budget_items ON DELETE CASCADE). */
+export async function deleteBudgetCategory(id: string): Promise<void> {
+  // A kategóriához rendelt számlák megmaradnak, csak kategória nélkül
+  const { error: billsError } = await supabase.from('bills').update({ category_id: null }).eq('category_id', id)
+  if (billsError) throw billsError
+  const { error } = await supabase.from('budget_categories').delete().eq('id', id)
+  if (error) throw error
+}

@@ -127,7 +127,7 @@ export function BillForm({ initial, onSubmit, onCancel, submitLabel }: BillFormP
             type="button"
             onClick={() => setCategoryId(c.id)}
             className={`flex items-center gap-1.5 rounded-pill border px-3 py-1.5 text-[13px] font-medium ${
-              categoryId === c.id ? 'border-white bg-white text-black' : 'border-white/15 bg-white/5 text-white/80'
+              categoryId === c.id ? 'border-[var(--accent)] bg-[var(--accent)] text-black' : 'border-white/15 bg-white/5 text-white/80'
             }`}
           >
             <SectionIcon icon={c.icon} />
@@ -174,7 +174,7 @@ export function BillForm({ initial, onSubmit, onCancel, submitLabel }: BillFormP
                 onClick={() => toggleViewer(m.id)}
                 className={`rounded-pill border px-3 py-1.5 text-[13px] font-medium ${
                   viewerIds.includes(m.id)
-                    ? 'border-white bg-white text-black'
+                    ? 'border-[var(--accent)] bg-[var(--accent)] text-black'
                     : 'border-white/15 bg-white/5 text-white/80'
                 }`}
               >
@@ -190,7 +190,7 @@ export function BillForm({ initial, onSubmit, onCancel, submitLabel }: BillFormP
       <button
         type="submit"
         disabled={busy}
-        className="mt-1 rounded-pill bg-white px-4 py-3 text-[15px] font-semibold text-black disabled:opacity-50"
+        className="mt-1 rounded-pill bg-[var(--accent)] px-4 py-3 text-[15px] font-semibold text-black disabled:opacity-50"
       >
         {busy ? 'Mentés...' : (submitLabel ?? 'Mentés')}
       </button>

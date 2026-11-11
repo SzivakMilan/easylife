@@ -21,7 +21,7 @@ export function ReminderPicker({ value, onChange }: ReminderPickerProps) {
             onClick={() => toggle(o.value)}
             className={`rounded-pill border px-3 py-1.5 text-[13px] font-medium ${
               value.includes(o.value)
-                ? 'border-white bg-white text-black'
+                ? 'border-[var(--accent)] bg-[var(--accent)] text-black'
                 : 'border-white/15 bg-white/5 text-white/80'
             }`}
           >

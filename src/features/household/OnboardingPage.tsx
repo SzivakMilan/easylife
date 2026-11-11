@@ -11,7 +11,9 @@ type Mode = 'choice' | 'create' | 'join'
 
 export function OnboardingPage() {
   const { signOut } = useAuth()
-  const { createHousehold, joinHousehold } = useHousehold()
+  const { createHousehold, joinHousehold, household, setAddingHousehold } = useHousehold()
+  // Meglévő háztartás mellé adunk hozzá egy újat (a menüből indítva)
+  const isAdding = household !== null
   const [mode, setMode] = useState<Mode>('choice')
   const [displayName, setDisplayName] = useState('')
   const [avatarColor, setAvatarColor] = useState(AVATAR_COLORS[0])
@@ -51,7 +53,15 @@ export function OnboardingPage() {
   return (
     <div className="flex min-h-dvh flex-col items-center justify-center px-6">
       <div className="w-full max-w-sm">
-        <h1 className="text-center text-[24px] font-bold tracking-tight text-white">Üdv az Otthonban!</h1>
+        <h1 className="text-center text-[24px] font-bold tracking-tight text-white">
+          {isAdding ? 'Háztartás hozzáadása' : 'Üdv az Otthonban!'}
+        </h1>
+        {isAdding && (
+          <p className="mt-2 text-center text-[14px] text-white/55">
+            Hozz létre egy újat, vagy csatlakozz egy meglévőhöz meghívó kóddal. A háztartások között a jobb felső
+            menüben válthatsz.
+          </p>
+        )}
 
         {mode === 'choice' && (
           <div className="mt-6 flex flex-col gap-2">
@@ -67,9 +77,18 @@ export function OnboardingPage() {
             >
               Csatlakozás meghívó kóddal
             </button>
-            <button onClick={signOut} className="mt-4 text-center text-[14px] font-medium text-white/40">
-              Kijelentkezés
-            </button>
+            {isAdding ? (
+              <button
+                onClick={() => setAddingHousehold(false)}
+                className="mt-4 text-center text-[14px] font-medium text-white/50"
+              >
+                Mégse
+              </button>
+            ) : (
+              <button onClick={signOut} className="mt-4 text-center text-[14px] font-medium text-white/40">
+                Kijelentkezés
+              </button>
+            )}
           </div>
         )}
 
@@ -112,7 +131,7 @@ export function OnboardingPage() {
             <button
               type="submit"
               disabled={busy}
-              className="rounded-pill bg-white px-4 py-3 text-[15px] font-semibold text-black disabled:opacity-50"
+              className="rounded-pill bg-[var(--accent)] px-4 py-3 text-[15px] font-semibold text-black disabled:opacity-50"
             >
               {busy ? 'Folyamatban...' : mode === 'create' ? 'Háztartás létrehozása' : 'Csatlakozás'}
             </button>
