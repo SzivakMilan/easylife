@@ -442,6 +442,26 @@ isOneToOne: false
       referencedColumns: ["id"]
     }
                   ]
+                },"user_active_household": {
+                  Row: {
+                    "household_id": string,"updated_at": string,"user_id": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "household_id": string,"updated_at"?: string,"user_id": string
+                  }
+                  Update: {
+                    "household_id"?: string,"updated_at"?: string,"user_id"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "user_active_household_household_id_fkey"
+      columns: ["household_id"]
+isOneToOne: false
+      referencedRelation: "households"
+      referencedColumns: ["id"]
+    }
+                  ]
                 }
           }
           Views: {
@@ -500,15 +520,8 @@ isOneToOne: false
                            },
 "my_households":
 { Args: Record<PropertyKey, never>; Returns: {
-              "household_id": string,
-"is_active": boolean,
-"member_id": string,
-"name": string,
-"role": string
+              "household_id": string,"is_active": boolean,"member_id": string,"name": string,"role": string
             }[]
-                           },
-"set_active_household":
-{ Args: { "p_household_id": string }; Returns: undefined
                            },
 "redeem_household_link_invite":
 { Args: { "invite_code": string }; Returns: {
@@ -540,7 +553,10 @@ isOneToOne: false
         to: "household_members"
         isOneToOne: true
         isSetofReturn: false
-      } }
+      } },
+"set_active_household":
+{ Args: { "p_household_id": string }; Returns: undefined
+                           }
           }
           Enums: {
             [_ in never]: never
