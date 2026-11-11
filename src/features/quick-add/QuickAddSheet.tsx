@@ -10,12 +10,13 @@ import { useBudget } from '../budget/BudgetContext'
 import { BillForm } from '../bills/BillForm'
 import { useBills } from '../bills/BillsContext'
 
+export type QuickAddKind = 'deadline' | 'event' | 'bill' | 'expense'
+
 interface QuickAddSheetProps {
   open: boolean
   onClose: () => void
+  forcedKind?: QuickAddKind | null
 }
-
-type QuickAddKind = 'deadline' | 'event' | 'bill' | 'expense'
 
 const OPTIONS: { key: QuickAddKind; label: string; icon: string }[] = [
   { key: 'deadline', label: 'Határidő', icon: 'flag' },
@@ -24,21 +25,31 @@ const OPTIONS: { key: QuickAddKind; label: string; icon: string }[] = [
   { key: 'expense', label: 'Kiadás', icon: 'wallet' },
 ]
 
-export function QuickAddSheet({ open, onClose }: QuickAddSheetProps) {
+export function QuickAddSheet({ open, onClose, forcedKind = null }: QuickAddSheetProps) {
   const [kind, setKind] = useState<QuickAddKind | null>(null)
   const { create: createDeadline } = useDeadlines()
   const { create: createEvent } = useEvents()
   const { categories, createItem } = useBudget()
   const { create: createBill } = useBills()
 
+  const effectiveKind = forcedKind ?? kind
+
   function handleClose() {
     setKind(null)
     onClose()
   }
 
+  // Ha az oldal eleve egy adott típusra korlátoz (pl. Határidők oldalon csak
+  // határidő), nincs választómenü, amihez vissza lehetne lépni - ilyenkor a
+  // form "Mégse" gombja egyből zárja az egész lapot.
+  function handleBack() {
+    if (forcedKind) handleClose()
+    else setKind(null)
+  }
+
   return (
     <BottomSheet open={open} onClose={handleClose}>
-      {!kind ? (
+      {!effectiveKind ? (
         <div>
           <h2 className="mb-4 text-center text-[17px] font-bold text-white">Mit szeretnél hozzáadni?</h2>
           <div className="flex flex-col gap-2">
@@ -57,35 +68,35 @@ export function QuickAddSheet({ open, onClose }: QuickAddSheetProps) {
       ) : (
         <div>
           <h2 className="mb-4 text-center text-[17px] font-bold text-white">
-            Új {OPTIONS.find((o) => o.key === kind)?.label.toLowerCase()}
+            Új {OPTIONS.find((o) => o.key === effectiveKind)?.label.toLowerCase()}
           </h2>
-          {kind === 'deadline' && (
+          {effectiveKind === 'deadline' && (
             <DeadlineForm
               onSubmit={async (input) => {
                 await createDeadline(input)
                 handleClose()
               }}
-              onCancel={() => setKind(null)}
+              onCancel={handleBack}
               submitLabel="Határidő létrehozása"
             />
           )}
-          {kind === 'event' && (
+          {effectiveKind === 'event' && (
             <EventForm
               onSubmit={async (input) => {
                 await createEvent(input)
                 handleClose()
               }}
-              onCancel={() => setKind(null)}
+              onCancel={handleBack}
               submitLabel="Időpont létrehozása"
             />
           )}
-          {kind === 'expense' &&
+          {effectiveKind === 'expense' &&
             (categories.length === 0 ? (
               <div className="flex flex-col gap-3">
                 <p className="text-[14px] text-white/50">
                   Először hozz létre egy költségvetési kategóriát a Költségvetés oldalon.
                 </p>
-                <button onClick={() => setKind(null)} className="text-[14px] font-medium text-white/50">
+                <button onClick={handleBack} className="text-[14px] font-medium text-white/50">
                   Vissza
                 </button>
               </div>
@@ -93,17 +104,17 @@ export function QuickAddSheet({ open, onClose }: QuickAddSheetProps) {
               <BudgetItemForm
                 categories={categories}
                 submitLabel="Tétel rögzítése"
-                onCancel={() => setKind(null)}
+                onCancel={handleBack}
                 onSubmit={async (input) => {
                   await createItem(input)
                   handleClose()
                 }}
               />
             ))}
-          {kind === 'bill' && (
+          {effectiveKind === 'bill' && (
             <BillForm
               submitLabel="Számla rögzítése"
-              onCancel={() => setKind(null)}
+              onCancel={handleBack}
               onSubmit={async (input) => {
                 await createBill(input)
                 handleClose()

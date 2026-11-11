@@ -4,7 +4,7 @@ import { Header } from './components/layout/Header'
 import { SectionBackground } from './components/layout/SectionBackground'
 import { SwipeNav } from './components/layout/SwipeNav'
 import { Fab } from './components/ui/Fab'
-import { QuickAddSheet } from './features/quick-add/QuickAddSheet'
+import { QuickAddSheet, type QuickAddKind } from './features/quick-add/QuickAddSheet'
 import { HomePage } from './features/home/HomePage'
 import { DeadlinesPage } from './features/deadlines/DeadlinesPage'
 import { EventsPage } from './features/events/EventsPage'
@@ -38,9 +38,16 @@ function App() {
   return <AppShell />
 }
 
+const SECTION_QUICK_ADD_KIND: Partial<Record<string, QuickAddKind>> = {
+  deadlines: 'deadline',
+  events: 'event',
+  budget: 'expense',
+  bills: 'bill',
+}
+
 function AppShell() {
   const [quickAddOpen, setQuickAddOpen] = useState(false)
-  const { colors } = useSection()
+  const { meta, colors } = useSection()
 
   return (
     <div className="relative mx-auto min-h-dvh w-full max-w-[480px] border-x border-white/5">
@@ -59,7 +66,11 @@ function AppShell() {
         </SwipeNav>
       </main>
       <Fab accent={colors.accent} onClick={() => setQuickAddOpen(true)} />
-      <QuickAddSheet open={quickAddOpen} onClose={() => setQuickAddOpen(false)} />
+      <QuickAddSheet
+        open={quickAddOpen}
+        onClose={() => setQuickAddOpen(false)}
+        forcedKind={SECTION_QUICK_ADD_KIND[meta.key] ?? null}
+      />
     </div>
   )
 }
