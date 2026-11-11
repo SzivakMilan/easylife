@@ -4,6 +4,7 @@ import { useAuth } from '../auth/AuthContext'
 import { useHousehold } from '../household/HouseholdContext'
 import { detectPlatform, isStandalone } from '../../lib/platform'
 import { getExistingSubscription, isPushSupported, subscribeToPush, unsubscribeFromPush } from '../../lib/api/push'
+import { supabase } from '../../lib/supabaseClient'
 import { InstallGuideSheet } from './InstallGuideSheet'
 
 const ROWS = ['Profil', 'Háztartás', 'Névjegy']
@@ -11,8 +12,15 @@ const ROWS = ['Profil', 'Háztartás', 'Névjegy']
 export function SettingsPage() {
   const { passkeySupported, registerPasskey } = useAuth()
   const { myMember } = useHousehold()
-  const [passkeyStatus, setPasskeyStatus] = useState<'idle' | 'busy' | 'done'>('idle')
+  const [passkeyStatus, setPasskeyStatus] = useState<'checking' | 'idle' | 'busy' | 'done'>('checking')
   const [passkeyError, setPasskeyError] = useState<string | null>(null)
+
+  useEffect(() => {
+    if (!passkeySupported) return
+    supabase.auth.passkey.list().then(({ data }) => {
+      setPasskeyStatus(data && data.length > 0 ? 'done' : 'idle')
+    })
+  }, [passkeySupported])
   const [installGuideOpen, setInstallGuideOpen] = useState(false)
   const [installed] = useState(() => isStandalone())
   const [platform] = useState(() => detectPlatform())
@@ -110,8 +118,10 @@ export function SettingsPage() {
             Kapcsold be, hogy ezen a készüléken legközelebb e-mail nélkül, Face ID-val vagy Touch ID-val
             léphess be.
           </p>
-          {passkeyStatus === 'done' ? (
-            <p className="text-[14px] font-semibold text-emerald-400">Beállítva ezen a készüléken</p>
+          {passkeyStatus === 'checking' ? (
+            <p className="text-[13px] text-white/40">Ellenőrzés...</p>
+          ) : passkeyStatus === 'done' ? (
+            <p className="text-[14px] font-semibold text-emerald-400">Bekapcsolva</p>
           ) : (
             <button
               onClick={handlePasskeyRegister}
