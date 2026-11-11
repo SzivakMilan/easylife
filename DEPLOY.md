@@ -87,14 +87,18 @@ DASHBOARD_USERNAME=<válassz egy admin usernevet>
 DASHBOARD_PASSWORD=<generálj egy erős jelszót: openssl rand -base64 24>
 ```
 
-**SMTP a magic link e-mailekhez**: a hivatalos `.env.example` alapértelmezetten
-egy hamis `supabase-mail` konténert használ - ezzel a bejelentkező e-mailek
-NEM jutnak el a felhasználókhoz. Állítsd be a `SMTP_HOST` / `SMTP_PORT` /
-`SMTP_USER` / `SMTP_PASS` / `SMTP_ADMIN_EMAIL` / `SMTP_SENDER_NAME` változókat
-egy valódi SMTP-szolgáltatóra (pl. a már meglévő domain e-mail fiókjára, vagy
-egy külön SMTP providerre). Ha ez nincs megadva a felhasználó által, kérdezz
-rá, mielőtt éles bejelentkezést próbálnál tesztelni - ez nem derül ki a
-repóból, ez egy a felhasználó által választandó szolgáltatás.
+**SMTP nem szükséges**: az app jelszavas belépést használ (nem magic linket),
+így nincs szükség e-mail kézbesítésre a bejelentkezéshez. Állítsd be:
+
+```bash
+ENABLE_EMAIL_AUTOCONFIRM=true
+```
+
+Ez ugyanaz a beállítás, mint a helyi fejlesztésben a `supabase/config.toml`
+`enable_confirmations = false` sora - új fiók regisztrálásakor nincs
+"erősítsd meg az e-mailed" lépés, azonnal bejelentkezik. A hamis
+`supabase-mail` konténer így nem jelent problémát (semmi nem küld rajta
+keresztül e-mailt, amire a felhasználóknak szükségük lenne).
 
 ### 1.3 Indítás
 

@@ -7,7 +7,8 @@ interface AuthContextValue {
   user: User | null
   loading: boolean
   passkeySupported: boolean
-  signInWithEmail: (email: string) => Promise<{ error: string | null }>
+  signInWithPassword: (email: string, password: string) => Promise<{ error: string | null }>
+  signUpWithPassword: (email: string, password: string) => Promise<{ error: string | null }>
   signInWithPasskey: () => Promise<{ error: string | null }>
   registerPasskey: () => Promise<{ error: string | null }>
   signOut: () => Promise<void>
@@ -33,11 +34,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return () => subscription.subscription.unsubscribe()
   }, [])
 
-  async function signInWithEmail(email: string) {
-    const { error } = await supabase.auth.signInWithOtp({
-      email,
-      options: { emailRedirectTo: window.location.origin },
-    })
+  async function signInWithPassword(email: string, password: string) {
+    const { error } = await supabase.auth.signInWithPassword({ email, password })
+    return { error: error?.message ?? null }
+  }
+
+  async function signUpWithPassword(email: string, password: string) {
+    const { error } = await supabase.auth.signUp({ email, password })
     return { error: error?.message ?? null }
   }
 
@@ -64,7 +67,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         user: session?.user ?? null,
         loading,
         passkeySupported,
-        signInWithEmail,
+        signInWithPassword,
+        signUpWithPassword,
         signInWithPasskey,
         registerPasskey,
         signOut,

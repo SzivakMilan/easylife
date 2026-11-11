@@ -3,31 +3,38 @@ import { z } from 'zod'
 import { useAuth } from './AuthContext'
 
 const emailSchema = z.email('Adj meg egy érvényes e-mail címet')
+const passwordSchema = z.string().min(6, 'Legalább 6 karakter legyen a jelszó')
 
 export function LoginPage() {
-  const { signInWithEmail, signInWithPasskey, passkeySupported } = useAuth()
+  const { signInWithPassword, signUpWithPassword, signInWithPasskey, passkeySupported } = useAuth()
+  const [mode, setMode] = useState<'login' | 'signup'>('login')
   const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
   const [error, setError] = useState<string | null>(null)
-  const [status, setStatus] = useState<'idle' | 'sending' | 'sent'>('idle')
+  const [busy, setBusy] = useState(false)
   const [passkeyBusy, setPasskeyBusy] = useState(false)
   const [passkeyError, setPasskeyError] = useState<string | null>(null)
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
-    const result = emailSchema.safeParse(email)
-    if (!result.success) {
-      setError(result.error.issues[0].message)
+    const emailResult = emailSchema.safeParse(email)
+    if (!emailResult.success) {
+      setError(emailResult.error.issues[0].message)
+      return
+    }
+    const passwordResult = passwordSchema.safeParse(password)
+    if (!passwordResult.success) {
+      setError(passwordResult.error.issues[0].message)
       return
     }
     setError(null)
-    setStatus('sending')
-    const { error: sendError } = await signInWithEmail(result.data)
-    if (sendError) {
-      setError(sendError)
-      setStatus('idle')
-      return
-    }
-    setStatus('sent')
+    setBusy(true)
+    const { error: authError } =
+      mode === 'login'
+        ? await signInWithPassword(emailResult.data, passwordResult.data)
+        : await signUpWithPassword(emailResult.data, passwordResult.data)
+    setBusy(false)
+    if (authError) setError(authError)
   }
 
   async function handlePasskey() {
@@ -43,57 +50,65 @@ export function LoginPage() {
       <div className="w-full max-w-sm">
         <h1 className="text-center text-[28px] font-bold tracking-tight text-white">Otthon</h1>
         <p className="mt-2 text-center text-[15px] text-white/60">
-          Jelentkezz be e-mail címmel, belépő linket küldünk.
+          {mode === 'login' ? 'Jelentkezz be e-mail címmel és jelszóval.' : 'Hozz létre egy fiókot e-mail címmel és jelszóval.'}
         </p>
 
-        {status === 'sent' ? (
-          <div className="mt-6 rounded-card border border-white/10 bg-white/5 px-5 py-6 text-center">
-            <p className="text-[16px] font-semibold text-white">Nézd meg az e-mailed</p>
-            <p className="mt-1 text-[14px] text-white/60">
-              Küldtünk egy belépő linket ide: <span className="text-white">{email}</span>
-            </p>
+        {passkeySupported && (
+          <div className="mt-6 flex flex-col gap-2">
+            <button
+              onClick={handlePasskey}
+              disabled={passkeyBusy}
+              className="flex items-center justify-center gap-2 rounded-pill bg-white px-4 py-3 text-[15px] font-semibold text-black disabled:opacity-50"
+            >
+              <FaceIdIcon />
+              {passkeyBusy ? 'Folyamatban...' : 'Belépés Face ID / Touch ID-val'}
+            </button>
+            {passkeyError && <p className="text-[13px] text-red-400">{passkeyError}</p>}
+            <div className="my-1 flex items-center gap-3 text-[13px] text-white/35">
+              <span className="h-px flex-1 bg-white/10" />
+              vagy
+              <span className="h-px flex-1 bg-white/10" />
+            </div>
           </div>
-        ) : (
-          <>
-            {passkeySupported && (
-              <div className="mt-6 flex flex-col gap-2">
-                <button
-                  onClick={handlePasskey}
-                  disabled={passkeyBusy}
-                  className="flex items-center justify-center gap-2 rounded-pill bg-white px-4 py-3 text-[15px] font-semibold text-black disabled:opacity-50"
-                >
-                  <FaceIdIcon />
-                  {passkeyBusy ? 'Folyamatban...' : 'Belépés Face ID / Touch ID-val'}
-                </button>
-                {passkeyError && <p className="text-[13px] text-red-400">{passkeyError}</p>}
-                <div className="my-1 flex items-center gap-3 text-[13px] text-white/35">
-                  <span className="h-px flex-1 bg-white/10" />
-                  vagy
-                  <span className="h-px flex-1 bg-white/10" />
-                </div>
-              </div>
-            )}
-            <form onSubmit={handleSubmit} className={`flex flex-col gap-3 ${passkeySupported ? '' : 'mt-6'}`}>
-              <input
-                type="email"
-                inputMode="email"
-                autoComplete="email"
-                placeholder="te@example.com"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="rounded-2xl border border-white/15 bg-white/5 px-4 py-3 text-[16px] text-white placeholder:text-white/35 focus:outline-none"
-              />
-              {error && <p className="text-[14px] text-red-400">{error}</p>}
-              <button
-                type="submit"
-                disabled={status === 'sending'}
-                className="rounded-pill border border-white/20 bg-white/5 px-4 py-3 text-[15px] font-semibold text-white active:bg-white/10 disabled:opacity-50"
-              >
-                {status === 'sending' ? 'Küldés...' : 'Belépő link küldése'}
-              </button>
-            </form>
-          </>
         )}
+
+        <form onSubmit={handleSubmit} className={`flex flex-col gap-3 ${passkeySupported ? '' : 'mt-6'}`}>
+          <input
+            type="email"
+            inputMode="email"
+            autoComplete="email"
+            placeholder="te@example.com"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            className="rounded-2xl border border-white/15 bg-white/5 px-4 py-3 text-[16px] text-white placeholder:text-white/35 focus:outline-none"
+          />
+          <input
+            type="password"
+            autoComplete={mode === 'login' ? 'current-password' : 'new-password'}
+            placeholder="Jelszó"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            className="rounded-2xl border border-white/15 bg-white/5 px-4 py-3 text-[16px] text-white placeholder:text-white/35 focus:outline-none"
+          />
+          {error && <p className="text-[14px] text-red-400">{error}</p>}
+          <button
+            type="submit"
+            disabled={busy}
+            className="rounded-pill border border-white/20 bg-white/5 px-4 py-3 text-[15px] font-semibold text-white active:bg-white/10 disabled:opacity-50"
+          >
+            {busy ? 'Folyamatban...' : mode === 'login' ? 'Belépés' : 'Fiók létrehozása'}
+          </button>
+        </form>
+
+        <button
+          onClick={() => {
+            setMode(mode === 'login' ? 'signup' : 'login')
+            setError(null)
+          }}
+          className="mt-4 w-full text-center text-[14px] text-white/50"
+        >
+          {mode === 'login' ? 'Nincs még fiókod? Hozz létre egyet' : 'Már van fiókod? Lépj be'}
+        </button>
       </div>
     </div>
   )

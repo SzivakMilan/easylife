@@ -40,8 +40,9 @@ pnpm dev
 
 - App: http://localhost:5173
 - Supabase Studio (adatbázis admin felület): http://127.0.0.1:54323
-- Mailpit (helyi tesztelésnél ide futnak be a bejelentkező e-mailek, mert nincs
-  valódi e-mail küldés helyben): http://127.0.0.1:54324
+- Mailpit (helyi tesztelésnél ide futna be bármilyen auth e-mail, pl. jelszó-
+  visszaállítás - a belépés magával jelszóval megy, e-mail küldés nélkül):
+  http://127.0.0.1:54324
 
 Leállítás: `pnpm db:stop`. Teljes visszaállítás (minden migráció újrafuttatása,
 adatvesztéssel): `pnpm db:reset`.
