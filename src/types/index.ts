@@ -7,6 +7,7 @@ export type SectionKey =
   | 'shopping'
   | 'health'
   | 'news'
+  | 'travel'
   | 'family'
   | 'settings'
 
@@ -116,6 +117,38 @@ export interface NewsArticle {
   title: string
   link: string
   publishedAt: string
+}
+
+export interface Trip {
+  id: string
+  name: string
+  destination?: string
+  startDate: string
+  endDate?: string
+  note?: string
+  participantIds: string[]
+}
+
+export interface TripPackingItem {
+  id: string
+  tripId: string
+  name: string
+  checked: boolean
+}
+
+export interface TripExpense {
+  id: string
+  tripId: string
+  amount: number
+  note?: string
+  occurredOn: string
+}
+
+export interface TripDocument {
+  id: string
+  tripId: string
+  label: string
+  filePath: string
 }
 
 export type AgendaItemType = 'deadline' | 'event' | 'bill'

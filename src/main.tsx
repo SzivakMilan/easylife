@@ -12,6 +12,7 @@ import { BillsProvider } from './features/bills/BillsContext'
 import { ShoppingProvider } from './features/shopping/ShoppingContext'
 import { HealthProvider } from './features/health/HealthContext'
 import { NewsProvider } from './features/news/NewsContext'
+import { TripsProvider } from './features/travel/TripsContext'
 
 // Telepített PWA-ként a régi service worker nem frissíti magát automatikusan
 // csak attól, hogy új build kerül ki a szerverre - enélkül a felhasználó a
@@ -37,7 +38,9 @@ createRoot(document.getElementById('root')!).render(
                   <ShoppingProvider>
                     <HealthProvider>
                       <NewsProvider>
-                        <App />
+                        <TripsProvider>
+                          <App />
+                        </TripsProvider>
                       </NewsProvider>
                     </HealthProvider>
                   </ShoppingProvider>

@@ -115,6 +115,11 @@ export const SECTION_ICONS: Record<string, (props: IconProps) => ReactElement> =
       <path d="M4 5a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2M8 9h7M8 13h7M8 17h4" />
     </svg>
   ),
+  plane: (p) => (
+    <svg {...p} width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
+      <path d="M10.5 20.5 12 15l-7.5 2-1-1.5L12 10l-.8-5.6a1.5 1.5 0 0 1 2.6-1.2L17 7l5.5-1.5 1 1.5L18 12l2 5.5-1.5 1-4-3-4 4Z" />
+    </svg>
+  ),
   ticket: (p) => (
     <svg {...p} width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
       <path d="M4 8a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2 2 2 0 0 0 0 8 2 2 0 0 1-2 2H6a2 2 0 0 1-2-2 2 2 0 0 0 0-8Z" />

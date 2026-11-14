@@ -494,6 +494,112 @@ isOneToOne: false
       referencedColumns: ["id"]
     }
                   ]
+                },"trip_documents": {
+                  Row: {
+                    "created_at": string,"created_by": string,"file_path": string,"id": string,"label": string,"trip_id": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "created_at"?: string,"created_by": string,"file_path": string,"id"?: string,"label": string,"trip_id": string
+                  }
+                  Update: {
+                    "created_at"?: string,"created_by"?: string,"file_path"?: string,"id"?: string,"label"?: string,"trip_id"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "trip_documents_trip_id_fkey"
+      columns: ["trip_id"]
+isOneToOne: false
+      referencedRelation: "trips"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"trip_expenses": {
+                  Row: {
+                    "amount": number,"created_at": string,"created_by": string,"id": string,"note": string | null,"occurred_on": string,"trip_id": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "amount": number,"created_at"?: string,"created_by": string,"id"?: string,"note"?: string | null,"occurred_on": string,"trip_id": string
+                  }
+                  Update: {
+                    "amount"?: number,"created_at"?: string,"created_by"?: string,"id"?: string,"note"?: string | null,"occurred_on"?: string,"trip_id"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "trip_expenses_trip_id_fkey"
+      columns: ["trip_id"]
+isOneToOne: false
+      referencedRelation: "trips"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"trip_packing_items": {
+                  Row: {
+                    "checked": boolean,"created_at": string,"created_by": string,"id": string,"name": string,"trip_id": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "checked"?: boolean,"created_at"?: string,"created_by": string,"id"?: string,"name": string,"trip_id": string
+                  }
+                  Update: {
+                    "checked"?: boolean,"created_at"?: string,"created_by"?: string,"id"?: string,"name"?: string,"trip_id"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "trip_packing_items_trip_id_fkey"
+      columns: ["trip_id"]
+isOneToOne: false
+      referencedRelation: "trips"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"trip_participants": {
+                  Row: {
+                    "member_id": string,"trip_id": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "member_id": string,"trip_id": string
+                  }
+                  Update: {
+                    "member_id"?: string,"trip_id"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "trip_participants_member_id_fkey"
+      columns: ["member_id"]
+isOneToOne: false
+      referencedRelation: "household_members"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "trip_participants_trip_id_fkey"
+      columns: ["trip_id"]
+isOneToOne: false
+      referencedRelation: "trips"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"trips": {
+                  Row: {
+                    "created_at": string,"created_by": string,"destination": string | null,"end_date": string | null,"household_id": string,"id": string,"name": string,"note": string | null,"start_date": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "created_at"?: string,"created_by": string,"destination"?: string | null,"end_date"?: string | null,"household_id": string,"id"?: string,"name": string,"note"?: string | null,"start_date": string
+                  }
+                  Update: {
+                    "created_at"?: string,"created_by"?: string,"destination"?: string | null,"end_date"?: string | null,"household_id"?: string,"id"?: string,"name"?: string,"note"?: string | null,"start_date"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "trips_household_id_fkey"
+      columns: ["household_id"]
+isOneToOne: false
+      referencedRelation: "households"
+      referencedColumns: ["id"]
+    }
+                  ]
                 },"user_active_household": {
                   Row: {
                     "household_id": string,"updated_at": string,"user_id": string

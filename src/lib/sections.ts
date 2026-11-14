@@ -16,6 +16,7 @@ export const SECTIONS: SectionMeta[] = [
   { key: 'shopping', label: 'Bevásárlás', path: '/bevasarlas', icon: 'cart' },
   { key: 'health', label: 'Egészség', path: '/egeszseg', icon: 'heart' },
   { key: 'news', label: 'Hírek', path: '/hirek', icon: 'newspaper' },
+  { key: 'travel', label: 'Utazás', path: '/utazas', icon: 'plane' },
   { key: 'family', label: 'Családtagok', path: '/csaladtagok', icon: 'users' },
   { key: 'settings', label: 'Beállítások', path: '/beallitasok', icon: 'settings' },
 ]
@@ -54,6 +55,7 @@ export const SECTION_GRADIENTS: Record<SectionKey, { accent: string }> = {
   shopping: { accent: 'var(--section-shopping-accent)' },
   health: { accent: 'var(--section-health-accent)' },
   news: { accent: 'var(--section-news-accent)' },
+  travel: { accent: 'var(--section-travel-accent)' },
   family: { accent: 'var(--section-family-accent)' },
   settings: { accent: 'var(--section-settings-accent)' },
 }
