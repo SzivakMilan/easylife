@@ -1,5 +1,6 @@
 import { createContext, useCallback, useContext, useEffect, useState, type ReactNode } from 'react'
 import { supabase } from '../../lib/supabaseClient'
+import { useRealtimeRefresh } from '../../lib/realtime'
 import { useAuth } from '../auth/AuthContext'
 import type { ConnectedMember, HouseholdMember, Invite, MyHousehold } from '../../types/household'
 
@@ -125,6 +126,8 @@ export function HouseholdProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     refresh()
   }, [refresh])
+
+  useRealtimeRefresh('household_members', household?.id, refresh)
 
   async function switchHousehold(householdId: string) {
     const { error } = await supabase.rpc('set_active_household', { p_household_id: householdId })

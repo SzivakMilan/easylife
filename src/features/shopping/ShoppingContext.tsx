@@ -6,6 +6,7 @@ import {
   fetchShoppingItems,
   setShoppingItemChecked,
 } from '../../lib/api/shoppingItems'
+import { useRealtimeRefresh } from '../../lib/realtime'
 import { useAuth } from '../auth/AuthContext'
 import { useHousehold } from '../household/HouseholdContext'
 import type { ShoppingItem } from '../../types'
@@ -43,6 +44,8 @@ export function ShoppingProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     refresh()
   }, [refresh])
+
+  useRealtimeRefresh('shopping_items', household?.id, refresh)
 
   async function create(name: string) {
     if (!household || !user) throw new Error('Nincs háztartásod')

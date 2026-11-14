@@ -1,5 +1,6 @@
 import { createContext, useCallback, useContext, useEffect, useState, type ReactNode } from 'react'
 import { createHealthEntry, deleteHealthEntry, fetchHealthEntries, type HealthEntryInput } from '../../lib/api/health'
+import { useRealtimeRefresh } from '../../lib/realtime'
 import { useAuth } from '../auth/AuthContext'
 import { useHousehold } from '../household/HouseholdContext'
 import type { HealthEntry } from '../../types'
@@ -35,6 +36,8 @@ export function HealthProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     refresh()
   }, [refresh])
+
+  useRealtimeRefresh('health_entries', household?.id, refresh)
 
   async function create(input: HealthEntryInput) {
     if (!household || !user) throw new Error('Nincs háztartásod')

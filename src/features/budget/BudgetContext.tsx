@@ -22,6 +22,7 @@ import {
   type SavingsContributionInput,
   type SavingsGoalInput,
 } from '../../lib/api/savingsGoals'
+import { useRealtimeRefresh } from '../../lib/realtime'
 import { useAuth } from '../auth/AuthContext'
 import { useHousehold } from '../household/HouseholdContext'
 import type { BudgetCategory, BudgetItem, SavingsContribution, SavingsGoal } from '../../types'
@@ -83,6 +84,11 @@ export function BudgetProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     refresh()
   }, [refresh])
+
+  useRealtimeRefresh('budget_categories', household?.id, refresh)
+  useRealtimeRefresh('budget_items', household?.id, refresh)
+  useRealtimeRefresh('savings_goals', household?.id, refresh)
+  useRealtimeRefresh('savings_contributions', household?.id, refresh)
 
   async function createCategory(input: CategoryInput) {
     if (!household) throw new Error('Nincs háztartásod')

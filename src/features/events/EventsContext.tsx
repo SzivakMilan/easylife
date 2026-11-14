@@ -1,6 +1,7 @@
 import { createContext, useCallback, useContext, useEffect, useState, type ReactNode } from 'react'
 import { createEvent, deleteEvent, fetchEvents, updateEvent, type EventInput } from '../../lib/api/events'
 import { notifyNewItem } from '../../lib/api/notify'
+import { useRealtimeRefresh } from '../../lib/realtime'
 import { useAuth } from '../auth/AuthContext'
 import { useHousehold } from '../household/HouseholdContext'
 import type { EventItem } from '../../types'
@@ -37,6 +38,8 @@ export function EventsProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     refresh()
   }, [refresh])
+
+  useRealtimeRefresh('events', household?.id, refresh)
 
   async function create(input: EventInput) {
     if (!household || !user) throw new Error('Nincs háztartásod')
