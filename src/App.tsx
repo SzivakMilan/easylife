@@ -11,6 +11,8 @@ import { EventsPage } from './features/events/EventsPage'
 import { BudgetPage } from './features/budget/BudgetPage'
 import { BillsPage } from './features/bills/BillsPage'
 import { ShoppingPage } from './features/shopping/ShoppingPage'
+import { HealthPage } from './features/health/HealthPage'
+import { NewsPage } from './features/news/NewsPage'
 import { FamilyPage } from './features/family/FamilyPage'
 import { SettingsPage } from './features/settings/SettingsPage'
 import { SearchPage } from './features/search/SearchPage'
@@ -63,6 +65,8 @@ function AppShell() {
           <Route path="/koltsegvetes" element={<BudgetPage />} />
           <Route path="/szamlak" element={<BillsPage />} />
           <Route path="/bevasarlas" element={<ShoppingPage />} />
+          <Route path="/egeszseg" element={<HealthPage />} />
+          <Route path="/hirek" element={<NewsPage />} />
           <Route path="/csaladtagok" element={<FamilyPage />} />
           <Route path="/beallitasok" element={<SettingsPage />} />
           <Route path="/kereses" element={<SearchPage />} />

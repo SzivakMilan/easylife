@@ -87,6 +87,34 @@ export const SECTION_ICONS: Record<string, (props: IconProps) => ReactElement> =
       <path d="M5 21c0-4 3-6 7-6s7 2 7 6" />
     </svg>
   ),
+  heart: (p) => (
+    <svg {...p} width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
+      <path d="M12 20.3 4.6 13a4.6 4.6 0 0 1 6.5-6.5l.9.9.9-.9a4.6 4.6 0 0 1 6.5 6.5Z" />
+    </svg>
+  ),
+  droplet: (p) => (
+    <svg {...p} width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
+      <path d="M12 3.5s6.5 7.1 6.5 11.3a6.5 6.5 0 0 1-13 0C5.5 10.6 12 3.5 12 3.5Z" />
+    </svg>
+  ),
+  utensils: (p) => (
+    <svg {...p} width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
+      <path d="M7 3v7a2 2 0 1 1-4 0V3M5 10v11M9 3v6a1.5 1.5 0 0 0 3 0V3M10.5 11v10" />
+      <path d="M19 3c-2.2 0-4 2.2-4 6s1.8 3.5 4 3.5V3Zm0 9.5V21" />
+    </svg>
+  ),
+  scale: (p) => (
+    <svg {...p} width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
+      <rect x="3" y="3" width="18" height="18" rx="4" />
+      <path d="M12 9v3l2.2 2.2" />
+    </svg>
+  ),
+  newspaper: (p) => (
+    <svg {...p} width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
+      <path d="M4 5h13a3 3 0 0 1 3 3v10a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V5Z" />
+      <path d="M4 5a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2M8 9h7M8 13h7M8 17h4" />
+    </svg>
+  ),
   ticket: (p) => (
     <svg {...p} width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
       <path d="M4 8a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2 2 2 0 0 0 0 8 2 2 0 0 1-2 2H6a2 2 0 0 1-2-2 2 2 0 0 0 0-8Z" />

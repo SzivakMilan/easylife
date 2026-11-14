@@ -270,6 +270,26 @@ isOneToOne: false
       referencedColumns: ["id"]
     }
                   ]
+                },"health_entries": {
+                  Row: {
+                    "amount": number | null,"created_at": string,"created_by": string,"household_id": string,"id": string,"note": string | null,"occurred_at": string,"type": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "amount"?: number | null,"created_at"?: string,"created_by": string,"household_id": string,"id"?: string,"note"?: string | null,"occurred_at"?: string,"type": string
+                  }
+                  Update: {
+                    "amount"?: number | null,"created_at"?: string,"created_by"?: string,"household_id"?: string,"id"?: string,"note"?: string | null,"occurred_at"?: string,"type"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "health_entries_household_id_fkey"
+      columns: ["household_id"]
+isOneToOne: false
+      referencedRelation: "households"
+      referencedColumns: ["id"]
+    }
+                  ]
                 },"household_links": {
                   Row: {
                     "created_at": string,"created_by": string,"household_a_id": string,"household_b_id": string,"id": string,"status": string
@@ -356,6 +376,38 @@ isOneToOne: false
       referencedColumns: ["id"]
     }
                   ]
+                },"member_news_interests": {
+                  Row: {
+                    "category": string,"created_at": string,"id": string,"member_id": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "category": string,"created_at"?: string,"id"?: string,"member_id": string
+                  }
+                  Update: {
+                    "category"?: string,"created_at"?: string,"id"?: string,"member_id"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "member_news_interests_member_id_fkey"
+      columns: ["member_id"]
+isOneToOne: false
+      referencedRelation: "household_members"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"news_articles": {
+                  Row: {
+                    "category": string,"fetched_at": string,"id": string,"link": string,"published_at": string,"source": string,"title": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "category": string,"fetched_at"?: string,"id"?: string,"link": string,"published_at": string,"source": string,"title": string
+                  }
+                  Update: {
+                    "category"?: string,"fetched_at"?: string,"id"?: string,"link"?: string,"published_at"?: string,"source"?: string,"title"?: string
+                  }
+                  Relationships: []
                 },"push_subscriptions": {
                   Row: {
                     "auth": string,"created_at": string,"endpoint": string,"id": string,"member_id": string,"p256dh": string

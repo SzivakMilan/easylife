@@ -10,6 +10,8 @@
   --section-budget-accent: #2dd4bf;
   --section-bills-accent: #a78bfa;
   --section-shopping-accent: #fbbf24;
+  --section-health-accent: #ef4444;
+  --section-news-accent: #a3e635;
   --section-family-accent: #fb7185;
   --section-settings-accent: #9ca3af;
 
@@ -35,6 +37,8 @@
   --color-section-budget: var(--section-budget-accent);
   --color-section-bills: var(--section-bills-accent);
   --color-section-shopping: var(--section-shopping-accent);
+  --color-section-health: var(--section-health-accent);
+  --color-section-news: var(--section-news-accent);
   --color-section-family: var(--section-family-accent);
   --color-section-settings: var(--section-settings-accent);
 

@@ -146,8 +146,12 @@ függvényeket (nincs `supabase functions deploy` Cloud-CLI self-hostnál):
 cp -r <app repo>/supabase/functions/send-reminders /opt/easylife-supabase/volumes/functions/
 cp -r <app repo>/supabase/functions/send-daily-digest /opt/easylife-supabase/volumes/functions/
 cp -r <app repo>/supabase/functions/notify-new-item /opt/easylife-supabase/volumes/functions/
+cp -r <app repo>/supabase/functions/fetch-news /opt/easylife-supabase/volumes/functions/
 cp -r <app repo>/supabase/functions/_shared /opt/easylife-supabase/volumes/functions/
 ```
+
+(A `fetch-news` a nyilvános Telex RSS-t kéri le - nincs hozzá API-kulcs vagy
+saját secret, a lenti 3.1/3.2 VAPID-lépések csak a push-küldéshez kellenek.)
 
 (A `_shared` mappa a VAPID push-küldést tartalmazza - mindhárom fenti függvény
 importál belőle, úgyhogy együtt kell másolni velük.)
@@ -220,6 +224,20 @@ select cron.schedule(
   \$\$
   select net.http_post(
     url := 'http://functions:9000/send-daily-digest',
+    headers := jsonb_build_object(
+      'Content-Type', 'application/json',
+      'Authorization', 'Bearer <a .env-ben generált SERVICE_ROLE_KEY>'
+    )
+  );
+  \$\$
+);
+select cron.unschedule('fetch-news');
+select cron.schedule(
+  'fetch-news',
+  '30 5 * * *',
+  \$\$
+  select net.http_post(
+    url := 'http://functions:9000/fetch-news',
     headers := jsonb_build_object(
       'Content-Type', 'application/json',
       'Authorization', 'Bearer <a .env-ben generált SERVICE_ROLE_KEY>'

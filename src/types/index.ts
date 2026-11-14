@@ -5,6 +5,8 @@ export type SectionKey =
   | 'budget'
   | 'bills'
   | 'shopping'
+  | 'health'
+  | 'news'
   | 'family'
   | 'settings'
 
@@ -95,6 +97,25 @@ export interface BudgetItem {
   amount: number
   note?: string
   occurredOn: string
+}
+
+export type HealthEntryType = 'food' | 'drink' | 'weight'
+
+export interface HealthEntry {
+  id: string
+  type: HealthEntryType
+  amount?: number
+  note?: string
+  occurredAt: string
+}
+
+export interface NewsArticle {
+  id: string
+  source: string
+  category: string
+  title: string
+  link: string
+  publishedAt: string
 }
 
 export type AgendaItemType = 'deadline' | 'event' | 'bill'
